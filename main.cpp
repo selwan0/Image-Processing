@@ -3,18 +3,18 @@
 #include"frame_filter.cpp"
 #include "greyscale_filter.cpp"
 #include "black_and_white.cpp"
+#include "flip_filter.cpp"
 using namespace std;
 
 void menu() 
 {
-  //  cout<< "Image Processing Menu"<<endl;
-   // cout<<" 1: Download a new image "<<endl;
-
-    cout <<"    filter Menu"<<endl;
+    cout<<"Image Processing Menu"<<endl;
+    cout<<" 1: Download a new image "<<endl;
     cout<<" 2: Apply Frame Filter"<<endl;
     cout<<" 3: Apply Greyscale Filter"<<endl;
-    cout<<" 4: Apply Black and White Filter"<<endl;
-   // cout<<" 5: Save The image "<<endl;
+    cout <<" 4: Apply Black and White Filter"<<endl;
+    cout<<" 5: Apply Flip Filter"<<endl;
+    cout<<" 6: Save The image "<<endl;
     cout<<" 0: Exit "<<endl;
     cout<<" choose an option from this:";
 }
@@ -29,23 +29,18 @@ int main()
     
     while(true) 
     {
-        cout << "Download a new image" << endl;
-        cout << "Enter image filename: ";
-        cin >> filename;
-        image.loadNewImage(filename);
-        cout << "Image loaded" << endl;
 
 
         menu();
         cin>>choice;
-       /* if(choice == 1)
+        if(choice == 1)
         {
             cout<<" Enter image filename: " ;
             cin>>filename;
             image.loadNewImage(filename);
             cout<<"Image loaded"<<endl;
-        }*/
-        /*else*/ if (choice == 2)
+        }
+        else if (choice == 2)
         {
             applyframefilter(image);
             cout<<"Frame Filter applied"<<endl;
@@ -60,13 +55,31 @@ int main()
             black_and_white(image,128);
             cout<<"Black and White Filter applied"<<endl;
         }
-       /* else if(choice == 5)
+        else if(choice == 6)
         {
             cout<<" Enter output filename"<<endl;
             cin>>filename;
             image.saveImage(filename);
             cout<<"Image saved"<<endl;
-        }*/
+        }
+        
+        else if (choice == 5)
+        {
+            int flipChoice;
+            cout<<"Choose flip option:"<<endl;
+            cout<<"1: Horizontal Flip"<<endl;
+            cout<<"2: Vertical Flip"<<endl;
+            cin>>flipChoice;
+            if (flipChoice == 1) {
+                Horizontal_Flip(image);
+                cout << "Horizontal Flip applied" << endl;
+            } else if (flipChoice == 2) {
+                Vertical_Flip(image);
+                cout << "Vertical Flip applied" << endl;
+            } else {
+                cout << "Invalid flip option" << endl;
+            }
+        }
         else if(choice == 0)
         {
             cout<<"Exit the program"<<endl;
