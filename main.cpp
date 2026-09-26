@@ -1,16 +1,18 @@
 #include<iostream>
 #include"Image_Class.h"
 #include"frame_filter.cpp"
+#include "greyscale_filter.cpp"
 using namespace std;
 
 void menu() 
 {
     cout<< "Image Processing Menu"<<endl;
     cout<<" 1: Download a new image "<<endl;
-    cout<<" 2: Apply filter according to team member's filter"<<endl;
-    cout<<" 3: Save The image "<<endl;
+    cout<<" 2: Apply Frame Filter"<<endl;
+    cout<<" 3: Apply Greyscale Filter"<<endl;
+    cout<<" 4: Save The image "<<endl;
     cout<<" 0: Exit "<<endl;
-    cout<< "choose an option from this:";
+    cout<<" choose an option from this:";
 }
 
 
@@ -34,9 +36,14 @@ int main()
         else if (choice == 2)
         {
             applyframefilter(image);
-            cout<<"Filter applied"<<endl;
+            cout<<"Frame Filter applied"<<endl;
         }
         else if (choice == 3)
+        {
+            greyscale(image);
+            cout<<"Greyscale Filter applied"<<endl;
+        }
+        else if(choice == 4)
         {
             cout<<" Enter output filename"<<endl;
             cin>>filename;
@@ -49,8 +56,5 @@ int main()
             break;
         }
     }
-    
-    return 0;
-
 
 }
