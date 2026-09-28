@@ -44,8 +44,25 @@ int main()
         }
         else if (choice == 2)
         {
-            applyframefilter(image);
-            cout<<"Frame Filter applied"<<endl;
+            cout<<"enter image filename:";
+            cin>>filename;
+            image.loadNewImage(filename);
+           int colorchoice , type;
+
+           cout<<"1:white"<<endl;
+           cout<<"2:Black"<<endl;
+           cout<<"3:Red"<<endl;
+           cout<<"4:Green"<<endl;
+           cout<<"5:Blue"<<endl;
+           cin>>colorchoice;
+
+           cout<<"choose frame type 1 or 2:"<<endl;
+           cout<<"1:simple frame"<<endl;
+           cout<<"2:fancy frame"<<endl;
+           cin>>type;
+
+           applyframefilter(image,colorchoice,type);
+
         }
         else if (choice == 3)
         {
