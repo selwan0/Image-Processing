@@ -4,6 +4,7 @@
 #include "greyscale_filter.cpp"
 #include "black_and_white.cpp"
 #include "flip_filter.cpp"
+#include "rotate_image.cpp"
 using namespace std;
 
 void menu() 
@@ -14,7 +15,8 @@ void menu()
     cout<<" 3: Apply Greyscale Filter"<<endl;
     cout <<" 4: Apply Black and White Filter"<<endl;
     cout<<" 5: Apply Flip Filter"<<endl;
-    cout<<" 6: Save The image "<<endl;
+    cout <<" 6: Apply Rotate Filter"<<endl;
+    cout<<" 7: Save The image "<<endl;
     cout<<" 0: Exit "<<endl;
     cout<<" choose an option from this:";
 }
@@ -55,15 +57,7 @@ int main()
             black_and_white(image,128);
             cout<<"Black and White Filter applied"<<endl;
         }
-        else if(choice == 6)
-        {
-            cout<<" Enter output filename"<<endl;
-            cin>>filename;
-            image.saveImage(filename);
-            cout<<"Image saved"<<endl;
-        }
-        
-        else if (choice == 5)
+         else if (choice == 5)
         {
             int flipChoice;
             cout<<"Choose flip option:"<<endl;
@@ -80,6 +74,22 @@ int main()
                 cout << "Invalid flip option" << endl;
             }
         }
+        else if (choice ==6){
+            int angle;
+            cout << "Enter rotation angle (90, 180, 270): ";
+            cin >> angle;
+            rotate_image(image, angle);
+            cout << "Rotation applied" << endl;
+        }
+
+        else if(choice == 7)
+        {
+            cout<<" Enter output filename"<<endl;
+            cin>>filename;
+            image.saveImage(filename);
+            cout<<"Image saved"<<endl;
+        }
+        
         else if(choice == 0)
         {
             cout<<"Exit the program"<<endl;
