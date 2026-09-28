@@ -5,6 +5,8 @@
 #include "black_and_white.cpp"
 #include "flip_filter.cpp"
 #include "rotate_image.cpp"
+#include "invert_filter.cpp"
+#include "darken_and_lighten_filter.cpp"
 using namespace std;
 
 void menu() 
@@ -16,7 +18,9 @@ void menu()
     cout <<" 4: Apply Black and White Filter"<<endl;
     cout<<" 5: Apply Flip Filter"<<endl;
     cout <<" 6: Apply Rotate Filter"<<endl;
-    cout<<" 7: Save The image "<<endl;
+    cout <<" 7: Apply Invert Filter"<<endl;
+    cout<<" 8: Apply Darken and Lighten Filter"<<endl;
+    cout<<" 9: Save The image "<<endl;
     cout<<" 0: Exit "<<endl;
     cout<<" choose an option from this:";
 }
@@ -82,7 +86,31 @@ int main()
             cout << "Rotation applied" << endl;
         }
 
-        else if(choice == 7)
+        else if (choice == 7)
+        {
+            applyinvertfilter(image);
+            cout<<"Invert Filter applied"<<endl;
+        }
+
+        else if (choice == 8)
+        {
+            int darkenLightenChoice;
+            cout<<"Choose option:"<<endl;
+            cout<<"1: Darken"<<endl;
+            cout<<"2: Lighten"<<endl;
+            cin>>darkenLightenChoice;
+            if (darkenLightenChoice == 1) {
+                applyDarkenFilter(image);
+                cout << "Darken Filter applied" << endl;
+            } else if (darkenLightenChoice == 2) {
+                applyLightenFilter(image);
+                cout << "Lighten Filter applied" << endl;
+            } else {
+                cout << "Invalid option" << endl;
+            }
+        }
+
+        else if(choice == 9)
         {
             cout<<" Enter output filename"<<endl;
             cin>>filename;
