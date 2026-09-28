@@ -5,6 +5,7 @@
 #include "black_and_white.cpp"
 #include "flip_filter.cpp"
 #include "rotate_image.cpp"
+#include "darken_and_lighten_filter.cpp"
 using namespace std;
 
 void menu() 
@@ -16,8 +17,10 @@ void menu()
     cout <<" 4: Apply Black and White Filter"<<endl;
     cout<<" 5: Apply Flip Filter"<<endl;
     cout <<" 6: Apply Rotate Filter"<<endl;
-    cout<<" 7: Save The image "<<endl;
-    cout<<" 0: Exit "<<endl;
+    cout << " 7: Apply Darken Filter" << endl;
+    cout << " 8: Apply Lighten Filter" << endl;
+    cout << " 9: Save The image" << endl;
+    cout << " 0: Exit " << endl;
     cout<<" choose an option from this:";
 }
 
@@ -99,24 +102,27 @@ int main()
             cout << "Rotation applied" << endl;
         }
 
-        else if(choice == 7)
-        {
-            cout<<" Enter output filename"<<endl;
-            cin>>filename;
-            image.saveImage(filename);
-            cout<<"Image saved"<<endl;
-        }
         
-        else if(choice == 0)
+    else if(choice == 8)
+    {
+        applyLightenFilter(image);
+        cout << "Lighten Filter applied" << endl;
+    }
+
+    else if(choice == 9)
+    {
+        cout << "Enter output filename: ";
+        cin >> filename;
+        image.saveImage(filename);
+        cout << "Image saved" << endl;
+    }
+        
+    else if(choice == 0)
         {
             cout<<"Exit the program"<<endl;
             break;
         }
         
-        cout <<"Enter output filename to save the image: ";
-        cin >> filename;
-        image.saveImage(filename);
-        cout << "Image saved" << endl;
     }
 
 }

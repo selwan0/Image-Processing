@@ -26,9 +26,9 @@ void applyLightenFilter(Image& image)
             int red = image.getPixel(i , j , 0);
             int green = image.getPixel(i , j , 1);
             int blue = image.getPixel(i , j , 2);
-            image.setPixel(i , j , 0 , min(((red*0.5) + red ), 255));
-            image.setPixel(i , j , 1 , min(((green*0.5) + green ), 255));
-            image.setPixel(i , j , 2 , min(((blue*0.5) + blue ), 255));
+            image.setPixel(i , j , 0 , min(((red*0.5) + red ), 255.0));
+            image.setPixel(i , j , 1 , min(((green*0.5) + green ), 255.0));
+            image.setPixel(i , j , 2 , min(((blue*0.5) + blue ), 255.0));
         }
     
     }
