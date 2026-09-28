@@ -6,6 +6,7 @@
 #include "flip_filter.cpp"
 #include "rotate_image.cpp"
 #include "darken_and_lighten_filter.cpp"
+#include "resize_filter.cpp"
 using namespace std;
 
 void menu() 
@@ -19,7 +20,8 @@ void menu()
     cout <<" 6: Apply Rotate Filter"<<endl;
     cout << " 7: Apply Darken Filter" << endl;
     cout << " 8: Apply Lighten Filter" << endl;
-    cout << " 9: Save The image" << endl;
+    cout<< " 9: Apply resize Filter"<<endl;
+    cout << " 10: Save The image" << endl;
     cout << " 0: Exit " << endl;
     cout<<" choose an option from this:";
 }
@@ -111,6 +113,12 @@ int main()
 
     else if(choice == 9)
     {
+        resize_image(image);
+        cout<<"Resize Filter Applied"<<endl;
+    }
+
+    else if(choice == 10)
+    {
         cout << "Enter output filename: ";
         cin >> filename;
         image.saveImage(filename);
@@ -123,6 +131,5 @@ int main()
             break;
         }
         
-    }
-
+}
 }
