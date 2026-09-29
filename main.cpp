@@ -5,6 +5,7 @@
 #include "black_and_white.cpp"
 #include "flip_filter.cpp"
 #include "rotate_image.cpp"
+#include "invert_filter.cpp"
 #include "darken_and_lighten_filter.cpp"
 #include "resize_filter.cpp"
 using namespace std;
@@ -12,63 +13,101 @@ using namespace std;
 void menu() 
 {
     cout<<"Image Processing Menu"<<endl;
-    cout<<" 1: Download a new image "<<endl;
     cout<<" 2: Apply Frame Filter"<<endl;
     cout<<" 3: Apply Greyscale Filter"<<endl;
     cout <<" 4: Apply Black and White Filter"<<endl;
     cout<<" 5: Apply Flip Filter"<<endl;
     cout <<" 6: Apply Rotate Filter"<<endl;
-    cout << " 7: Apply Darken Filter" << endl;
-    cout << " 8: Apply Lighten Filter" << endl;
-    cout<< " 9: Apply resize Filter"<<endl;
-    cout << " 10: Save The image" << endl;
-    cout << " 0: Exit " << endl;
+    cout <<" 7: Apply Invert Filter"<<endl;
+    cout<<" 8: Apply Darken and Lighten Filter"<<endl;
+    cout<<" 9: Apply Resize Filter"<<endl;
+    cout<<" 10: Save The image "<<endl;
+    cout<<" 0: Exit "<<endl;
     cout<<" choose an option from this:";
 }
 
+void load_image(Image& image , string& file_name){
+    while (true){
+        cout << "Enter file name :";
+        cin >> file_name;
+        
+        int dot = file_name.find_last_of('.');
+        string ext = (dot == -1) ? " " : file_name.substr(dot);
+        if (ext!= ".jpg" && ext != ".jpeg" && ext != ".png" && ext != ".bmp" ){
+            cout << "Invalid file extension. "<<endl<< "Please enter a valid image file name (.jpg, .jpeg, .png, .bmp)." << endl;
+            continue;
+        }
+        image.loadNewImage(file_name);
+        if (!image.imageData) {
+            cout << "Failed to load image." << endl;
+            continue;
+        }
+        break;
+    }
+}
+void save_image(Image& image , string& file_name){
+    while (true){
+        cout << "Enter file name to save the image :";
+        cin >> file_name;
+        
+        int dot = file_name.find_last_of('.');
+        string ext = (dot == -1) ? " " : file_name.substr(dot);
+        if (ext!= ".jpg" && ext != ".jpeg" && ext != ".png" && ext != ".bmp" ){
+            cout << "Invalid file extension. "<<endl<< "Please enter a valid extension (.jpg, .jpeg, .png, .bmp)." << endl;
+            continue;
+        }
+        if(!image.saveImage(file_name))
+        {
+            cout<<"failed to save the image try again with a valid filename."<<endl;
+            continue;
+        }
+        cout<<"image saved"<<endl;
+        break;
+    }
+}
 
 int main()
 {
     string filename;
-    int choice;
+    int choice ;
     int threshold = 128;
     Image image;
-    
-    while(true) 
-    {
+    load_image(image, filename);
 
+
+    while(true) 
+    
+    {
 
         menu();
         cin>>choice;
-        if(choice == 1)
+       if(choice == 1)
         {
             cout<<" Enter image filename: " ;
             cin>>filename;
+            
             image.loadNewImage(filename);
             cout<<"Image loaded"<<endl;
         }
         else if (choice == 2)
         {
-            cout<<"enter image filename:";
-            cin>>filename;
-            image.loadNewImage(filename);
-           int colorchoice , type;
+            int colorchoice, type;
+            cout<< " 1:white " <<endl;
+            cout<< " 2:Black " <<endl;
+            cout<< " 3:Red " <<endl;
+            cout<< " 4:Green " <<endl;
+            cout<< " 5:Blue " <<endl;
+            cout<<"choose color: ";
+            cin>> colorchoice;
 
-           cout<<"1:white"<<endl;
-           cout<<"2:Black"<<endl;
-           cout<<"3:Red"<<endl;
-           cout<<"4:Green"<<endl;
-           cout<<"5:Blue"<<endl;
-           cin>>colorchoice;
+            cout<<" choose frame type: "<<endl;
+            cout<< " 1:simple frame "<<endl;
+            cout<< " 2:fancy frame "<<endl;
+            cin>>type;
 
-           cout<<"choose frame type 1 or 2:"<<endl;
-           cout<<"1:simple frame"<<endl;
-           cout<<"2:fancy frame"<<endl;
-           cin>>type;
-
-           applyframefilter(image,colorchoice,type);
-
-        }
+            applyframefilter(image , colorchoice , type);
+        }          
+        
         else if (choice == 3)
         {
             greyscale(image);
@@ -104,32 +143,49 @@ int main()
             cout << "Rotation applied" << endl;
         }
 
-        
-    else if(choice == 8)
-    {
-        applyLightenFilter(image);
-        cout << "Lighten Filter applied" << endl;
-    }
+        else if (choice == 7)
+        {
+            applyinvertfilter(image);
+            cout<<"Invert Filter applied"<<endl;
+        }
 
-    else if(choice == 9)
-    {
-        resize_image(image);
-        cout<<"Resize Filter Applied"<<endl;
-    }
+        else if (choice == 8)
+        {
+            int darkenLightenChoice;
+            cout<<"Choose option:"<<endl;
+            cout<<"1: Darken"<<endl;
+            cout<<"2: Lighten"<<endl;
+            cin>>darkenLightenChoice;
+            if (darkenLightenChoice == 1) {
+                applyDarkenFilter(image);
+                cout << "Darken Filter applied" << endl;
+            } else if (darkenLightenChoice == 2) {
+                applyLightenFilter(image);
+                cout << "Lighten Filter applied" << endl;
+            } else {
+                cout << "Invalid option" << endl;
+            }
+        }
 
-    else if(choice == 10)
-    {
-        cout << "Enter output filename: ";
-        cin >> filename;
-        image.saveImage(filename);
-        cout << "Image saved" << endl;
-    }
+        else if(choice == 9)
+        {
+            resize_image(image);
+            cout<<"Resize Filter Applied"<<endl;
         
-    else if(choice == 0)
+        }
+
+        else if(choice == 10)
+        {
+            save_image(image, filename);
+            cout<<"Image saved"<<endl;
+        }
+         
+        else if(choice == 0)
         {
             cout<<"Exit the program"<<endl;
             break;
         }
         
-}
+    }
+
 }
