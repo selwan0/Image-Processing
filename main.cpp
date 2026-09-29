@@ -12,7 +12,6 @@ using namespace std;
 void menu() 
 {
     cout<<"Image Processing Menu"<<endl;
-    cout<<" 1: Download a new image "<<endl;
     cout<<" 2: Apply Frame Filter"<<endl;
     cout<<" 3: Apply Greyscale Filter"<<endl;
     cout <<" 4: Apply Black and White Filter"<<endl;
@@ -25,29 +24,66 @@ void menu()
     cout<<" choose an option from this:";
 }
 
+void load_image(Image& image , string& file_name){
+    while (true){
+        cout << "Enter file name :";
+        cin >> file_name;
+        
+        int dot = file_name.find_last_of('.');
+        string ext = (dot == -1) ? " " : file_name.substr(dot);
+        if (ext!= ".jpg" && ext != ".jpeg" && ext != ".png" && ext != ".bmp" ){
+            cout << "Invalid file extension. "<<endl<< "Please enter a valid image file name (.jpg, .jpeg, .png, .bmp)." << endl;
+            continue;
+        }
+        image.loadNewImage(file_name);
+        if (!image.imageData) {
+            cout << "Failed to load image." << endl;
+            continue;
+        }
+        break;
+    }
+}
+void save_image(Image& image , string& file_name){
+    while (true){
+        cout << "Enter file name to save the image :";
+        cin >> file_name;
+        
+        int dot = file_name.find_last_of('.');
+        string ext = (dot == -1) ? " " : file_name.substr(dot);
+        if (ext!= ".jpg" && ext != ".jpeg" && ext != ".png" && ext != ".bmp" ){
+            cout << "Invalid file extension. "<<endl<< "Please enter a valid extension (.jpg, .jpeg, .png, .bmp)." << endl;
+            continue;
+        }
+        image.saveImage(file_name);
+        break;
+    }
+}
 
 int main()
 {
     string filename;
-    int choice;
+    int choice ;
     int threshold = 128;
     Image image;
-    
-    while(true) 
-    {
+    load_image(image, filename);
 
+
+    while(true) 
+    
+    {
 
         menu();
         cin>>choice;
-        if(choice == 1)
+       if(choice == 1)
         {
             cout<<" Enter image filename: " ;
             cin>>filename;
+            
             image.loadNewImage(filename);
             cout<<"Image loaded"<<endl;
         }
         else if (choice == 2)
-        {
+            {
             applyframefilter(image);
             cout<<"Frame Filter applied"<<endl;
         }
@@ -112,11 +148,10 @@ int main()
 
         else if(choice == 9)
         {
-            cout<<" Enter output filename"<<endl;
-            cin>>filename;
-            image.saveImage(filename);
+            save_image(image, filename);
             cout<<"Image saved"<<endl;
         }
+        
         
         else if(choice == 0)
         {
@@ -124,10 +159,6 @@ int main()
             break;
         }
         
-        cout <<"Enter output filename to save the image: ";
-        cin >> filename;
-        image.saveImage(filename);
-        cout << "Image saved" << endl;
     }
 
 }
