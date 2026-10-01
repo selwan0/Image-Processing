@@ -7,15 +7,233 @@
 
 #include<iostream>
 #include"Image_Class.h"
-#include"frame_filter.cpp"
-#include "greyscale_filter.cpp"
-#include "black_and_white.cpp"
-#include "flip_filter.cpp"
-#include "rotate_image.cpp"
-#include "invert_filter.cpp"
-#include "darken_and_lighten_filter.cpp"
-#include "resize_filter.cpp"
+#include<string>
 using namespace std;
+
+
+void applyframefilter(Image& image , int colorchoice , int type )
+{
+    int thickness = min (image.width , image.height)/30;
+    if(thickness < 5) thickness=5;
+    
+    int Red=255 , Green=255 , Blue=255;
+    if(colorchoice == 2) {Red=0 ; Green=0 ; Blue=0;}
+    if(colorchoice==3) {Red=255 ; Green=0 ; Blue=0;}
+    if(colorchoice==4) {Red=0 ; Green=255 ; Blue=0;}
+    if(colorchoice==5) {Red=0 ; Green=0 ; Blue=255;}
+   
+     for(int i=0 ; i<image.height ; ++i)
+     {
+        for(int j=0 ; j<image.width ; ++j)
+        {
+            bool simpleframe = (j < thickness || j >= image.width - thickness || i< thickness || i >= image.height- thickness);
+            int space = thickness + 20;
+            int innerthickness = 10;
+            bool outerline = (j<thickness || j>= image.width - thickness ||i< thickness || i>= image.height - thickness);
+
+            bool innerline = ((j>= space && j<space + innerthickness && i>= space && i< image.height - space)
+            ||(j>= image.width - space - innerthickness && j<image.width - space && i>= space && i<image.height - space)
+            ||(i>= space && i<space + innerthickness && j>= space && j<image.width - space)
+            ||(i>=image.height - space - innerthickness && i<image.height - space && j>= space && j< image.width - space));
+            
+            bool fancyframe = outerline || innerline;
+
+            if(type==1 && simpleframe) 
+            {
+                image(j,i,0) = Red;
+                image(j,i,1) = Green;
+                image(j,i,2) = Blue;
+            }
+            else if(type==2 && fancyframe) 
+            {
+                image(j,i,0) = Red;
+                image(j,i,1) = Green;
+                image(j,i,2) = Blue;
+            }
+                
+        }
+     }
+}
+
+void greyscale(Image&image) {
+    
+    for (int i = 0; i < image.width; i++) {
+        for (int j = 0; j < image.height; j++) {
+
+            unsigned int average = 0;
+
+            for (int k = 0; k < 3; k++) {
+
+                average += image(i, j, k);
+            }
+
+            average = average / 3;
+            for (int k = 0; k < 3; k++) {
+
+                image(i, j, k) = average;
+                
+            }
+        }
+    }
+}
+
+void black_and_white(Image& image , int threshold = 128) {
+    for (int i = 0; i < image.width; i++) {
+        for (int j = 0; j < image.height; j++) {
+
+            unsigned int average = 0;
+
+            for (int k = 0; k < 3; k++) {
+
+                average += image(i, j, k);
+            }
+
+            average = average / 3;
+            if (average > threshold) {
+                for (int k = 0; k < 3; k++) {
+                    image(i, j, k) = 255;
+                }
+            } else {
+                for (int k = 0; k < 3; k++) {
+                    image(i, j, k) = 0;
+                }
+            }
+        }
+    }
+}
+
+void Horizontal_Flip(Image& image) {
+    for (int i = 0; i < image.width / 2; i++) {
+        for (int j = 0; j < image.height; j++) {
+            for (int k = 0; k < 3; k++) {
+                unsigned char temp = image(i, j, k);
+                image(i, j, k) = image(image.width - 1 - i, j, k);
+                image(image.width - 1 - i, j, k) = temp;
+            }
+        }
+    }
+}
+
+void Vertical_Flip(Image& image) {
+    for (int i = 0; i < image.width; i++) {
+        for (int j = 0; j < image.height / 2; j++) {
+            for (int k = 0; k < 3; k++) {
+                unsigned char temp = image(i, j, k);
+                image(i, j, k) = image(i, image.height - 1 - j, k);
+                image(i, image.height - 1 - j, k) = temp;
+            }
+        }
+    }
+}
+
+void rotate_image(Image& image , int angle){
+    int w = image.width;
+    int h = image.height;
+
+
+    if (angle ==90){
+        Image rotated_image(h, w);
+        for (int i = 0; i < w; i++) 
+            for (int j=0 ; j < h ; j++)
+                for (int k=0 ; k < 3 ; k++){
+                    rotated_image(h-1-j , i , k)= image(i , j , k); }
+        image = rotated_image;
+    }
+    else if (angle == 180){
+        Image rotated_image(w , h);
+        for (int i = 0; i < w; i++) 
+            for (int j=0 ;j<h ;j++)
+                for (int k=0 ; k<3 ; k++){
+                    rotated_image(w-1-i , h-1-j , k )= image(i , j , k); }
+        image = rotated_image;
+     }
+    else if (angle ==270){
+        Image rotated_image(h,w);
+        for (int i=0 ; i<w; i++)
+            for (int j=0 ; j < h ; j++)
+                for (int k=0 ; k<3 ; k++){
+                    rotated_image(j , w-1-i ,k)= image(i , j , k); }
+        image = rotated_image;
+    }
+}
+
+
+void applyinvertfilter(Image& image)
+{
+    for(int i=0 ; i<image.width ; ++i){
+        for(int j=0 ; j<image.height ; ++j)
+        {
+            int red = image.getPixel(i , j , 0);
+            int green = image.getPixel(i , j , 1);
+            int blue = image.getPixel(i , j , 2);
+            image.setPixel(i , j , 0 , 255 - red);
+            image.setPixel(i , j , 1 , 255 - green);
+            image.setPixel(i , j , 2 , 255 - blue);
+        }
+
+            }
+    }
+
+
+void applyDarkenFilter(Image& image)
+{
+    for(int i=0 ; i<image.width ; i++){
+        for(int j=0 ; j<image.height ; ++j)
+        {
+            int red = image.getPixel(i , j , 0);
+            int green = image.getPixel(i , j , 1);
+            int blue = image.getPixel(i , j , 2);
+            image.setPixel(i , j , 0 , red*0.5);
+            image.setPixel(i , j , 1 , green*0.5);
+            image.setPixel(i , j , 2 , blue*0.5);
+        }
+    
+    }
+}
+
+void applyLightenFilter(Image& image)
+{
+    for(int i=0 ; i<image.width ; i++){
+        for(int j=0 ; j<image.height ; ++j)
+        {
+            int red = image.getPixel(i , j , 0);
+            int green = image.getPixel(i , j , 1);
+            int blue = image.getPixel(i , j , 2);
+            image.setPixel(i , j , 0 , min(((red*0.5) + red ), 255.0));
+            image.setPixel(i , j , 1 , min(((green*0.5) + green ), 255.0));
+            image.setPixel(i , j , 2 , min(((blue*0.5) + blue ), 255.0));
+        }
+    
+    }
+}
+
+void resize_image(Image& image)
+{
+    cout<< "current image width: " << image.width << "current image height: " << image.height <<endl;
+    int new_width , new_height;
+    cout<<"Enter new width:";
+    cin>>new_width;
+    cout<<"Enter new height:";
+    cin>>new_height;
+
+    Image resized_image(new_width , new_height);
+    for(int i=0 ; i<new_height ; ++i)
+    {
+        for(int j=0 ; j<new_width ; ++j)
+        {
+            int orig_i = i*image.height / new_height;
+            int orig_j = j*image.width / new_width;
+
+            for(int k=0; k<image.channels; ++k)
+            {
+                resized_image(j,i,k) = image(orig_j , orig_i , k);
+            }
+        }
+    }
+    image = resized_image;
+}
+
+
 
 void menu() 
 {
