@@ -3,7 +3,7 @@
 //Student Name:Sama Ahmed Ibrahim       Student ID: 20250294    Filters: black and white, rotate
 //Student Name:Kenzi Ali Nosier         Student ID: 20250499    Filters: invert, darken and lighten
 //Student Name:Nada Mohamed Refaat      Student ID: 20250704    Filters: frame, resize
-//Section: S32
+//Section: S40
 
 
 #include<iostream>
