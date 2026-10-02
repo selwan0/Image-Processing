@@ -57,7 +57,7 @@ void applyframefilter(Image& image , int colorchoice , int type )
      }
 }
 
-void greyscale(Image&image) {
+void grayscale(Image&image) {
     
     for (int i = 0; i < image.width; i++) {
         for (int j = 0; j < image.height; j++) {
@@ -234,22 +234,51 @@ void resize_image(Image& image)
     }
     image = resized_image;
 }
+void detect_image_edges(Image& image, int threshold = 100) {
+    grayscale(image); 
+    int w = image.width;  int h = image.height;
+    Image edge_image(w, h);
+    
+    int gx[3][3] = {{-1, 0, 1}, {-2, 0, 2}, {-1, 0, 1}};
+    int gy[3][3] = {{-1, -2, -1}, {0, 0, 0}, {1, 2, 1}};
 
+    for (int i=0 ; i < w ; i++)
+        for (int j=0 ; j < h ; j++)
+            for (int k=0 ; k<3 ; k++)
+                edge_image(i,j,k) = 255;
 
-
+    for (int i=1 ; i < h-1 ; i++){
+        for (int j=1 ; j < w-1 ; j++)
+            {
+                int sumx =0 , sumy =0;
+                for (int a = -1 ; a <=1 ; a++){
+                    for (int b=-1 ; b <=1 ; b ++){
+                        int px = image(j+b , i+a , 0);
+                        sumx += px * gx[a+1][b+1];
+                        sumy += px * gy[a+1][b+1];
+                    }
+                }
+                int value = (abs (sumx) + abs(sumy)> threshold) ? 0 : 255;
+                for (int k=0 ; k<3 ; k++)
+                    edge_image(j,i,k) = value;  
+            }
+    }
+    image = edge_image;
+}
 void menu() 
 {
     cout<<"Image Processing Menu"<<endl;
     cout<<" 1: Load New Image"<<endl;
     cout<<" 2: Apply Frame Filter"<<endl;
-    cout<<" 3: Apply Greyscale Filter"<<endl;
+    cout<<" 3: Apply Grayscale Filter"<<endl;
     cout <<" 4: Apply Black and White Filter"<<endl;
     cout<<" 5: Apply Flip Filter"<<endl;
     cout <<" 6: Apply Rotate Filter"<<endl;
     cout <<" 7: Apply Invert Filter"<<endl;
     cout<<" 8: Apply Darken and Lighten Filter"<<endl;
     cout<<" 9: Apply Resize Filter"<<endl;
-    cout<<" 10: Save The image "<<endl;
+    cout<<" 11: Apply Edge Detection Filter"<<endl;  
+    cout<<" 17: Save The image "<<endl;
     cout<<" 0: Exit "<<endl;
     cout<<" choose an option from this:";
 }
@@ -366,9 +395,9 @@ int main()
         
         else if (choice == 3)
         {
-            greyscale(image);
+            grayscale(image);
             saved = false;
-            cout<<"Greyscale Filter applied"<<endl;
+            cout<<"Grayscale Filter applied"<<endl;
         }
         else if (choice == 4)
         {
@@ -438,8 +467,34 @@ int main()
             cout<<"Resize Filter Applied"<<endl;
         
         }
+        else if(choice == 11)
+        {
+            detect_image_edges(image, 100);
+            saved = false;
+            cout << "Edge Detection Filter applied" << endl;
+        }
+         
+        else if(choice == 17)
+        {
+            save_image(image, filename);
+            saved = true;
+        }
+         
+        else if(choice == 0)
+        {
+            if (!saved) {
+                cout << "You have unsaved changes. Do you want to save before exiting? (y/n): ";
+                char exitChoice;
+                cin >> exitChoice;
+                if (exitChoice == 'y' || exitChoice == 'Y') {
+                    save_image(image, filename);
+                }
+            }
+            cout << "Exiting the program." << endl;
+            break;
+        }
 
-        else if(choice == 10)
+        else if(choice == 17)
         {
             save_image(image, filename);
             saved = true;
