@@ -397,6 +397,32 @@ void sunlight(Image& image){
     }
 }
 
+void infraredImage(Image& image) 
+{
+    for(int i = 0 ; i< image.width ; ++i)
+    {
+        for(int j = 0 ; j< image.height ; ++j)
+        {
+            int Red = image(i , j , 0);
+            int Green = image(i , j , 1);
+            int Blue = image(i , j , 2);
+
+            int gray = (Red + Green + Blue) / 3;
+
+            int newRed = 255;
+            int newGreen = gray;
+            int newBlue = gray;
+
+            image.setPixel(i , j ,0 , newRed);
+            image.setPixel(i , j , 1 , newGreen);
+            image.setPixel(i , j , 2 , newBlue);
+        }
+    }
+     
+        
+    
+}
+
 void menu() 
 {
     cout<<"Image Processing Menu"<<endl;
@@ -414,6 +440,7 @@ void menu()
     cout<<" 12: Apply Blur Filter"<<endl;
     cout<<" 13: Apply Old Tv Filter"<<endl;
     cout<<" 14: Apply sunlight Filter"<<endl;
+    cout<<" 16: Apply Infrared Filter"<<endl;
     cout<<" 17: Save The image "<<endl;
     cout<<" 0: Exit "<<endl;
     cout<<" choose an option from this:";
@@ -643,6 +670,7 @@ int main()
             cout<<"Enter blur radius according to the level of blurrness you want:";
             cin>> radius;
             blurImage(image , radius);
+            saved = false;
             cout<<"Blur Filter Applied"<< endl;
         }
 
@@ -659,6 +687,13 @@ int main()
             sunlight(image);
             saved = false;
             cout << "Sunlight Filter applied" << endl;
+        }
+
+        else if(choice == 16)
+        {
+            infraredImage(image);
+            saved = false;
+            cout<< " Infrared Filter Applied "<< endl;
         }
 
 
