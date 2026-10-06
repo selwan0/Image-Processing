@@ -234,6 +234,51 @@ void resize_image(Image& image)
     }
     image = resized_image;
 }
+
+
+void merge(Image& image1, Image& image2, int mergeType) {
+    int W, H, mode = 0;
+    
+    if (image1.width == image2.width && image1.height == image2.height) {
+        W = image1.width;
+        H = image1.height;
+    }
+    else if(mergeType == 1) {
+        mode = 1;
+        W = max(image1.width, image2.width);
+        H = max(image1.height, image2.height);
+    }
+    else if(mergeType == 2) {
+        mode = 2;
+        W = min(image1.width, image2.width);
+        H = min(image1.height, image2.height);
+    }
+    Image outputImage (W, H);
+    for (int i = 0; i < W; i++) {
+        for (int j = 0; j < H; j++) {
+            int i1, j1, i2, j2;
+            if (mode == 2) {
+                i1 = i + (image1.width - W) / 2;
+                j1 = j + (image1.height - H) / 2;
+                i2 = i + (image2.width - W) / 2;
+                j2 = j + (image2.height - H) / 2;
+            }
+            else {
+                i1 = i * image1.width / W;
+                j1 = j * image1.height / H;
+                i2 = i * image2.width / W;
+                j2 = j * image2.height / H;
+            }
+            for (int k = 0; k < 3; k++) {
+                outputImage(i, j, k) = (image1(i1, j1, k) + image2(i2, j2, k)) / 2;
+            }
+        }
+    }
+    image1 = outputImage;
+}
+
+
+
 void detect_image_edges(Image& image, int threshold = 100) {
     grayscale(image); 
     int w = image.width;  int h = image.height;
@@ -328,21 +373,47 @@ void old_tv_filter (Image& image) {
     image = old_tv_image;
 }
 
+
+void sunlight(Image& image){
+
+    for(int i=0 ; i<image.width ; i++){
+        for(int j=0 ; j<image.height ; ++j)
+        {
+            int red = image(i , j , 0);
+            int green = image(i , j , 1);
+            int blue = image(i , j , 2);
+
+
+            red = min(255, (int)(red * 1.25 + 20));
+            green = min(255, (int)(green * 1.20 + 15));
+            blue = max(0, (int)(blue * 0.8));
+
+
+            image(i,j,0) = red;
+            image(i,j,1) = green;
+            image(i,j,2) = blue;
+        }
+    
+    }
+}
+
 void menu() 
 {
     cout<<"Image Processing Menu"<<endl;
     cout<<" 1: Load New Image"<<endl;
     cout<<" 2: Apply Frame Filter"<<endl;
     cout<<" 3: Apply Grayscale Filter"<<endl;
-    cout <<" 4: Apply Black and White Filter"<<endl;
+    cout<<" 4: Apply Black and White Filter"<<endl;
     cout<<" 5: Apply Flip Filter"<<endl;
-    cout <<" 6: Apply Rotate Filter"<<endl;
-    cout <<" 7: Apply Invert Filter"<<endl;
+    cout<<" 6: Apply Rotate Filter"<<endl;
+    cout<<" 7: Apply Invert Filter"<<endl;
     cout<<" 8: Apply Darken and Lighten Filter"<<endl;
     cout<<" 9: Apply Resize Filter"<<endl;
+    cout<<" 10: Apply Merge Filter"<<endl;
     cout<<" 11: Apply Edge Detection Filter"<<endl;  
     cout<<" 12: Apply Blur Filter"<<endl;
-    cout<<" 15: Apply Old Tv Filter"<<endl;
+    cout<<" 13: Apply Old Tv Filter"<<endl;
+    cout<<" 14: Apply sunlight Filter"<<endl;
     cout<<" 17: Save The image "<<endl;
     cout<<" 0: Exit "<<endl;
     cout<<" choose an option from this:";
@@ -532,12 +603,40 @@ int main()
             cout<<"Resize Filter Applied"<<endl;
         
         }
+
+        else if(choice == 10)
+        {
+            Image image2;
+            string file2;
+            cout << "Enter the filename of the second image to merge: ";
+            load_image(image2, file2);
+
+            int mergeType = 1;
+
+            if (image.width != image2.width || image.height != image2.height) {
+                cout << "The images have different dimensions, Please choose a merge type:" << endl;
+                cout << "1: Resize to the biggest dimensions" << endl;
+                cout << "2: Crop to the smallest dimensions (Common Area)" << endl;
+                cin >> mergeType;
+            }
+            else{
+                cout << "Invalid merge type" << endl;
+            }
+
+            merge(image, image2, mergeType);
+            saved = false;
+            cout << "Images merged successfully." << endl;
+        }
+
+
         else if(choice == 11)
         {
             detect_image_edges(image, 100);
             saved = false;
             cout << "Edge Detection Filter applied" << endl;
         }
+
+
         else if(choice == 12)
         {
             int radius;
@@ -546,38 +645,29 @@ int main()
             blurImage(image , radius);
             cout<<"Blur Filter Applied"<< endl;
         }
-        else if(choice == 15)
+
+
+        else if(choice == 13)
         {
             old_tv_filter(image);
             saved = false;
             cout << "Old TV Filter applied" << endl;
         }
-         
-        else if(choice == 17)
+
+        else if(choice == 14)
         {
-            save_image(image, filename);
-            saved = true;
+            sunlight(image);
+            saved = false;
+            cout << "Sunlight Filter applied" << endl;
         }
-         
-        else if(choice == 0)
-        {
-            if (!saved) {
-                cout << "You have unsaved changes. Do you want to save before exiting? (y/n): ";
-                char exitChoice;
-                cin >> exitChoice;
-                if (exitChoice == 'y' || exitChoice == 'Y') {
-                    save_image(image, filename);
-                }
-            }
-            cout << "Exiting the program." << endl;
-            break;
-        }
+
 
         else if(choice == 17)
         {
             save_image(image, filename);
             saved = true;
         }
+
          
         else if(choice == 0)
         {
