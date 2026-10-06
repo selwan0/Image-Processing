@@ -265,6 +265,69 @@ void detect_image_edges(Image& image, int threshold = 100) {
     }
     image = edge_image;
 }
+
+void blurImage(Image& image , int radius)
+{
+    Image result = image;
+
+    for(int i=0 ; i<image.width ;i++)
+    {
+        for(int j=0 ; j<image.height ;j++)
+        {
+            for(int c=0 ; c<3 ; c++)
+            {
+                int sum =0;
+                int count =0;
+                
+                for(int di= -radius ; di<= radius ; di++){
+                    for(int dj = -radius ; dj<= radius ; dj++){
+                        int neig_i = i+di;
+                        int neig_j = j+dj;
+                        if(neig_i >= 0 && neig_i < image.width && neig_j >= 0 && neig_j < image.height)
+                        {
+                            sum += image(neig_i , neig_j , c);
+                            count++ ;
+                        }
+                    }
+                }
+                result( i, j, c) = sum / count ;
+            }
+        }
+    }
+    image = result;
+}
+
+void old_tv_filter (Image& image) {
+    Image old_tv_image(image.width, image.height);
+    auto clampPixel = [] (int v ){
+        return (v < 0) ? 0 : (v > 255) ? 255 : v;
+    };
+    int shift = 5 , noiseAmount = 20 , lineGap = 3 ;
+    float lineDarkness = 0.4;
+
+    for (int j =0 ; j < image.height ; j++){
+        int glitch =0;
+        if ( rand() % 20 ==0 ) glitch = (rand() % 20 )- 10;
+        float lineFactor = (j % lineGap == 0) ? lineDarkness : 1.0;
+
+        for (int i =0 ; i < image.width ; i++){
+            int noise = (rand() % (2 * noiseAmount + 1)) - noiseAmount;
+
+            for (int k = 0 ; k < 3 ; k++){
+                int shifted_i = i + glitch;
+                if (k == 0) shifted_i += shift;
+                else if (k == 2) shifted_i -= shift;
+                shifted_i = max (min (shifted_i , image.width-1), 0);
+
+
+                int oldPixel = image(shifted_i, j, k) * lineFactor + noise;
+                old_tv_image(i,j,k) = clampPixel(oldPixel);
+            }
+        }
+    }
+    image = old_tv_image;
+}
+
 void menu() 
 {
     cout<<"Image Processing Menu"<<endl;
@@ -278,6 +341,8 @@ void menu()
     cout<<" 8: Apply Darken and Lighten Filter"<<endl;
     cout<<" 9: Apply Resize Filter"<<endl;
     cout<<" 11: Apply Edge Detection Filter"<<endl;  
+    cout<<" 12: Apply Blur Filter"<<endl;
+    cout<<" 15: Apply Old Tv Filter"<<endl;
     cout<<" 17: Save The image "<<endl;
     cout<<" 0: Exit "<<endl;
     cout<<" choose an option from this:";
@@ -472,6 +537,20 @@ int main()
             detect_image_edges(image, 100);
             saved = false;
             cout << "Edge Detection Filter applied" << endl;
+        }
+        else if(choice == 12)
+        {
+            int radius;
+            cout<<"Enter blur radius according to the level of blurrness you want:";
+            cin>> radius;
+            blurImage(image , radius);
+            cout<<"Blur Filter Applied"<< endl;
+        }
+        else if(choice == 15)
+        {
+            old_tv_filter(image);
+            saved = false;
+            cout << "Old TV Filter applied" << endl;
         }
          
         else if(choice == 17)
