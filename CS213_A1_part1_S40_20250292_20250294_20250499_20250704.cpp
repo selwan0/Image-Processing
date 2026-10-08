@@ -310,6 +310,33 @@ void detect_image_edges(Image& image, int threshold = 100) {
     }
     image = edge_image;
 }
+void applyCropFilter(Image& image, int x, int y, int width, int height)
+{
+    if (x + width <= image.width && y + height <= image.height)
+    {
+        Image cropped(width, height);
+
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                int red = image.getPixel(x + i, y + j, 0);
+                int green = image.getPixel(x + i, y + j, 1);
+                int blue = image.getPixel(x + i, y + j, 2);
+
+                cropped.setPixel(i, j, 0, red);
+                cropped.setPixel(i, j, 1, green);
+                cropped.setPixel(i, j, 2, blue);
+            }
+        }
+
+        image = cropped;
+    }
+    else
+    {
+        cout << "Invalid crop dimensions!" << endl;
+    }
+}
 
 void blurImage(Image& image , int radius)
 {
@@ -372,6 +399,22 @@ void old_tv_filter (Image& image) {
     }
     image = old_tv_image;
 }
+void applyPurpleFilter(Image& image)
+{
+    for (int i = 0; i < image.width; i++)
+    {
+        for (int j = 0; j < image.height; j++)
+        {
+            int red = image.getPixel(i, j, 0);
+            int green = image.getPixel(i, j, 1);
+            int blue = image.getPixel(i, j, 2);
+
+            image.setPixel(i, j, 0, min((red * 30) / 100 + red, 255));
+            image.setPixel(i, j, 1, max(green - (green * 30) / 100, 0));
+            image.setPixel(i, j, 2, min((blue * 30) / 100 + blue, 255));
+        }
+    }
+}
 
 
 void sunlight(Image& image){
@@ -417,31 +460,62 @@ void infraredImage(Image& image)
             image.setPixel(i , j , 1 , newGreen);
             image.setPixel(i , j , 2 , newBlue);
         }
+    }   
+}
+void applySkewFilter(Image& image, int angle)
+{
+    double pi = 3.141592653589793;
+
+    double maxShift = (image.height - 1) * tan(angle * pi / 180);
+
+    int newWidth = image.width + (int)abs(maxShift);
+
+    Image skewed(newWidth, image.height);
+
+    for (int y = 0; y < image.height; y++)
+    {
+        double shift = y * tan(angle * pi / 180);
+
+        for (int x = 0; x < image.width; x++)
+        {
+            int newX = (int)(x + shift);
+
+            int red = image.getPixel(x, y, 0);
+            int green = image.getPixel(x, y, 1);
+            int blue = image.getPixel(x, y, 2);
+
+            skewed.setPixel(newX, y, 0, red);
+            skewed.setPixel(newX, y, 1, green);
+            skewed.setPixel(newX, y, 2, blue);
+        }
     }
-     
-        
-    
+
+    image = skewed;
 }
 
 void menu() 
 {
     cout<<"Image Processing Menu"<<endl;
     cout<<" 1: Load New Image"<<endl;
-    cout<<" 2: Apply Frame Filter"<<endl;
-    cout<<" 3: Apply Grayscale Filter"<<endl;
-    cout<<" 4: Apply Black and White Filter"<<endl;
-    cout<<" 5: Apply Flip Filter"<<endl;
-    cout<<" 6: Apply Rotate Filter"<<endl;
-    cout<<" 7: Apply Invert Filter"<<endl;
+    cout<<" 2: Apply Grayscale Filter"<<endl;
+    cout<<" 3: Apply Black and White Filter"<<endl;
+    cout<<" 4: Apply Invert Filter"<<endl;
+    cout<<" 5: Apply Frame Filter"<<endl;
+    cout<<" 6: Apply Flip Filter"<<endl;
+    cout<<" 7: Apply Rotate Filter"<<endl;
     cout<<" 8: Apply Darken and Lighten Filter"<<endl;
     cout<<" 9: Apply Resize Filter"<<endl;
     cout<<" 10: Apply Merge Filter"<<endl;
-    cout<<" 11: Apply Edge Detection Filter"<<endl;  
-    cout<<" 12: Apply Blur Filter"<<endl;
-    cout<<" 13: Apply Old Tv Filter"<<endl;
+    cout<<" 11: Apply Detect Image Edges Filter"<<endl;
+    cout<<" 12: Apply Crop Image Filter"<<endl;
+    cout<<" 13: Apply Blur Filter"<<endl;
     cout<<" 14: Apply sunlight Filter"<<endl;
-    cout<<" 16: Apply Infrared Filter"<<endl;
-    cout<<" 17: Save The image "<<endl;
+    cout<<" 15: Apply Old Tv Filter"<<endl;
+    cout<<" 16: apply Purple Filter"<<endl;
+    cout<<" 17: Apply Infrared Filter"<<endl;
+    cout<<" 18: Apply Skew Filter"<<endl;
+
+    cout<<" 20: Save The image "<<endl;
     cout<<" 0: Exit "<<endl;
     cout<<" choose an option from this:";
 }
@@ -537,7 +611,26 @@ int main()
             image.loadNewImage(filename);
             cout<<"Image loaded"<<endl;
         }
+        
         else if (choice == 2)
+        {
+            grayscale(image);
+            saved = false;
+            cout<<"Grayscale Filter applied"<<endl;
+        }
+        else if (choice == 3)
+        {
+            black_and_white(image,128);
+            saved = false;
+            cout<<"Black and White Filter applied"<<endl;
+        }
+        else if (choice == 4)
+        {
+            applyinvertfilter(image);
+            saved = false;
+            cout<<"Invert Filter applied"<<endl;
+        }
+        else if (choice == 5)
         {
             int colorchoice, type;
             cout<< " 1:white " <<endl;
@@ -554,21 +647,10 @@ int main()
             cin>>type;
 
             applyframefilter(image , colorchoice , type);
-        }          
-        
-        else if (choice == 3)
-        {
-            grayscale(image);
-            saved = false;
-            cout<<"Grayscale Filter applied"<<endl;
         }
-        else if (choice == 4)
-        {
-            black_and_white(image,128);
-            saved = false;
-            cout<<"Black and White Filter applied"<<endl;
-        }
-         else if (choice == 5)
+
+
+         else if (choice == 6)
         {
             int flipChoice;
             cout<<"Choose flip option:"<<endl;
@@ -587,20 +669,13 @@ int main()
                 cout << "Invalid flip option" << endl;
             }
         }
-        else if (choice ==6){
+        else if (choice == 7){
             int angle;
             cout << "Enter rotation angle (90, 180, 270): ";
             cin >> angle;
             rotate_image(image, angle);
             saved = false;
             cout << "Rotation applied" << endl;
-        }
-
-        else if (choice == 7)
-        {
-            applyinvertfilter(image);
-            saved = false;
-            cout<<"Invert Filter applied"<<endl;
         }
 
         else if (choice == 8)
@@ -662,9 +737,20 @@ int main()
             saved = false;
             cout << "Edge Detection Filter applied" << endl;
         }
-
-
         else if(choice == 12)
+        {
+            int x, y, width, height;
+            cout << "Enter start x and y coordinates for the crop area: ";
+            cin >> x >> y;
+            cout << "Enter the width and height of the crop area: ";
+            cin >> width >> height;
+            applyCropFilter(image, x, y, width, height);
+            saved = false;
+            cout << "Crop Filter applied" << endl;
+        }
+
+
+        else if(choice == 13)
         {
             int radius;
             cout<<"Enter blur radius according to the level of blurrness you want:";
@@ -673,31 +759,42 @@ int main()
             saved = false;
             cout<<"Blur Filter Applied"<< endl;
         }
-
-
-        else if(choice == 13)
-        {
-            old_tv_filter(image);
-            saved = false;
-            cout << "Old TV Filter applied" << endl;
-        }
-
         else if(choice == 14)
         {
             sunlight(image);
             saved = false;
             cout << "Sunlight Filter applied" << endl;
         }
-
+        else if(choice == 15)
+        {
+            old_tv_filter(image);
+            saved = false;
+            cout << "Old TV Filter applied" << endl;
+        }
         else if(choice == 16)
+        {
+            applyPurpleFilter(image);
+            saved = false;
+            cout<< " Purple Filter Applied "<< endl;
+        }
+        else if(choice == 17)
         {
             infraredImage(image);
             saved = false;
             cout<< " Infrared Filter Applied "<< endl;
         }
+        else if(choice == 18)
+        {
+            int angle;
+            cout << "Enter skew angle in degrees (1 to 89): ";
+            cin >> angle;
+            applySkewFilter(image, angle);
+            saved = false;
+            cout << "Skew Filter applied" << endl;
+        }
 
 
-        else if(choice == 17)
+        else if(choice == 20)
         {
             save_image(image, filename);
             saved = true;
