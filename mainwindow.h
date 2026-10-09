@@ -20,12 +20,19 @@ public:
 private slots:
     void onLoadImageClicked();
     void onSaveImageClicked();
+    void onUndoClicked();
+    void onGreyscaleClicked();
+    void onBlackAndWhiteClicked();
+    void onInvertClicked();
+    
 
 private:
     Ui::MainWindow *ui;
     QImage currentImage;
-
+    QList<QImage> imageHistory; 
+    void saveStateForUndo();
     void updateImageDisplay();
+    bool hasImage();
 };
 
-#endif 
+#endif

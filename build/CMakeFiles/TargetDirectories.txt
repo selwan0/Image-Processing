@@ -1,0 +1,5 @@
+C:/Users/11/OneDrive/Documents/GitHub/Image-Processing/build/CMakeFiles/ImageProcessor.dir
+C:/Users/11/OneDrive/Documents/GitHub/Image-Processing/build/CMakeFiles/edit_cache.dir
+C:/Users/11/OneDrive/Documents/GitHub/Image-Processing/build/CMakeFiles/rebuild_cache.dir
+C:/Users/11/OneDrive/Documents/GitHub/Image-Processing/build/CMakeFiles/ImageProcessor_autogen_timestamp_deps.dir
+C:/Users/11/OneDrive/Documents/GitHub/Image-Processing/build/CMakeFiles/ImageProcessor_autogen.dir

@@ -30,14 +30,14 @@
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>160</x>
-      <y>10</y>
-      <width>75</width>
-      <height>24</height>
+      <x>180</x>
+      <y>20</y>
+      <width>161</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="text">
-     <string>load button</string>
+     <string>Load button</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_2">
@@ -285,6 +285,19 @@
     </property>
     <property name="text">
      <string>save button</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="UndoButton">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>10</y>
+      <width>81</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>UNDO</string>
     </property>
    </widget>
   </widget>
