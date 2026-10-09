@@ -1,0 +1,20 @@
+[
+{
+  "directory": "C:/Users/DELL/Documents/GitHub/Image-Processing/build",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe -DMINGW_HAS_SECURE_API=1 -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -DUNICODE -DWIN32 -DWIN64 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -D_UNICODE -D_WIN64 @CMakeFiles/ImageProcessor.dir/includes_CXX.rsp -g -std=gnu++17 -o CMakeFiles\\ImageProcessor.dir\\ImageProcessor_autogen\\mocs_compilation.cpp.obj -c C:\\Users\\DELL\\Documents\\GitHub\\Image-Processing\\build\\ImageProcessor_autogen\\mocs_compilation.cpp",
+  "file": "C:/Users/DELL/Documents/GitHub/Image-Processing/build/ImageProcessor_autogen/mocs_compilation.cpp",
+  "output": "CMakeFiles/ImageProcessor.dir/ImageProcessor_autogen/mocs_compilation.cpp.obj"
+},
+{
+  "directory": "C:/Users/DELL/Documents/GitHub/Image-Processing/build",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe -DMINGW_HAS_SECURE_API=1 -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -DUNICODE -DWIN32 -DWIN64 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -D_UNICODE -D_WIN64 @CMakeFiles/ImageProcessor.dir/includes_CXX.rsp -g -std=gnu++17 -o CMakeFiles\\ImageProcessor.dir\\main.cpp.obj -c C:\\Users\\DELL\\Documents\\GitHub\\Image-Processing\\main.cpp",
+  "file": "C:/Users/DELL/Documents/GitHub/Image-Processing/main.cpp",
+  "output": "CMakeFiles/ImageProcessor.dir/main.cpp.obj"
+},
+{
+  "directory": "C:/Users/DELL/Documents/GitHub/Image-Processing/build",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe -DMINGW_HAS_SECURE_API=1 -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -DUNICODE -DWIN32 -DWIN64 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -D_UNICODE -D_WIN64 @CMakeFiles/ImageProcessor.dir/includes_CXX.rsp -g -std=gnu++17 -o CMakeFiles\\ImageProcessor.dir\\mainwindow.cpp.obj -c C:\\Users\\DELL\\Documents\\GitHub\\Image-Processing\\mainwindow.cpp",
+  "file": "C:/Users/DELL/Documents/GitHub/Image-Processing/mainwindow.cpp",
+  "output": "CMakeFiles/ImageProcessor.dir/mainwindow.cpp.obj"
+}
+]

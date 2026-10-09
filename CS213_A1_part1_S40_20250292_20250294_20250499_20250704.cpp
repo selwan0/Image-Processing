@@ -493,6 +493,38 @@ void applySkewFilter(Image& image, int angle)
     image = skewed;
 }
 
+
+void applyOilPaintingFilter(Image& image, int brushSize) {
+    Image result(image.width, image.height);
+
+    for (int y = 0; y < image.height; ++y) {
+        for (int x = 0; x < image.width; ++x) {
+            int rSum = 0, gSum = 0, bSum = 0;
+            int count = 0;
+
+            for (int dy = -brushSize; dy <= brushSize; ++dy) {
+                for (int dx = -brushSize; dx <= brushSize; ++dx) {
+                    int newX = x + dx;
+                    int newY = y + dy;
+
+                    if (newX >= 0 && newX < image.width && newY >= 0 && newY < image.height) {
+                        rSum += image.getPixel(newX, newY, 0);
+                        gSum += image.getPixel(newX, newY, 1);
+                        bSum += image.getPixel(newX, newY, 2);
+                        count++;
+                    }
+                }
+            }
+
+            result.setPixel(x, y, 0, rSum / count);
+            result.setPixel(x, y, 1, gSum / count);
+            result.setPixel(x, y, 2, bSum / count);
+        }
+    }
+
+    image = result;
+}
+
 void menu() 
 {
     cout<<"Image Processing Menu"<<endl;
@@ -514,7 +546,7 @@ void menu()
     cout<<" 16: apply Purple Filter"<<endl;
     cout<<" 17: Apply Infrared Filter"<<endl;
     cout<<" 18: Apply Skew Filter"<<endl;
-
+    cout<<" 19: Apply Oil Painting Filter"<<endl;
     cout<<" 20: Save The image "<<endl;
     cout<<" 0: Exit "<<endl;
     cout<<" choose an option from this:";
@@ -803,6 +835,24 @@ int main()
             applySkewFilter(image, angle);
             saved = false;
             cout << "Skew Filter applied" << endl;
+        }
+
+
+        else if(choice == 19)
+        {
+            int brushSize;
+            cout << "Enter brush size for Oil Painting Filter(1-10): ";
+            cin >> brushSize;
+            if (brushSize < 1 || brushSize > 10) {
+                cout << "Invalid brush size. Please enter a value between 1 and 10." << endl;
+                continue;
+            }
+            else{
+                applyOilPaintingFilter(image, brushSize);
+                saved = false;
+                cout << "Oil Painting Filter applied" << endl;
+            }
+            
         }
 
 
