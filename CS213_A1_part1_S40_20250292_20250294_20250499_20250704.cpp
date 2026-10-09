@@ -551,56 +551,73 @@ void menu()
     cout<<" 0: Exit "<<endl;
     cout<<" choose an option from this:";
 }
-
-void load_image(Image& image , string& file_name){
-    while (true){
-        cout << "Enter file name :";
-        cin >> file_name;
-        
+bool isValidFilename(const string& file_name) {
         int dot = file_name.find_last_of('.');
         string ext = (dot == -1) ? " " : file_name.substr(dot);
         transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
-        if (ext!= ".jpg" && ext != ".jpeg" && ext != ".png" && ext != ".bmp" ){
-            cout << "Invalid file extension. "<<endl<< "Please enter a valid image file name (.jpg, .jpeg, .png, .bmp)." << endl;
+        return (ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".bmp");
+        
+
+}
+void load_image(Image& image , string& file_name){
+    while (true){
+        string name;
+        cout << "Enter file name :";
+        cin >> name;
+        
+        if (!isValidFilename(name)) {
+            cout << "Invalid file extension."<<endl<< "Please enter a valid image file name (.jpg, .jpeg, .png, .bmp)." << endl;
             continue;
         }
-        image.loadNewImage(file_name);
-        if (!image.imageData) {
-            cout << "Failed to load image." << endl;
+        Image tempImage;
+        try {
+            tempImage.loadNewImage(name);
+        }
+         catch (...) {
+            cout << "Failed to load image. Check the file name or format." << endl;
             continue;
         }
+        if (!tempImage.imageData) {
+            cout << "Failed to load image. Check the file name or format." << endl;
+            continue;
+        }
+        image = tempImage;
+        file_name = name;
         break;
     }
 }
-void save_image(Image& image , string& file_name){
+void save_image(Image& image , string& file_name, bool& saved){
     char saveChoice;
     cout<<"Do you want to save the image on the same filename or a new filename? (s/n): ";
     cin>>saveChoice;
+    string target;
     if(saveChoice == 's' || saveChoice == 'S')
     {
-        image.saveImage(file_name);
-        cout<<"Image saved on the same filename"<<endl;
+        target = file_name;
     }
-    else if(saveChoice == 'n' || saveChoice == 'N')
-    {
-        string newFilename;
-        cout<<"Enter the new filename: ";
-        cin>>newFilename;
-        transform(newFilename.begin(), newFilename.end(), newFilename.begin(), ::tolower);
-        string newFileExt = newFilename.substr(newFilename.find_last_of('.'));
-        transform(newFileExt.begin(), newFileExt.end(), newFileExt.begin(), ::tolower);
-        if (newFileExt != ".jpg" && newFileExt != ".jpeg" && newFileExt != ".png" && newFileExt != ".bmp") {
+    else if(saveChoice == 'n' || saveChoice == 'N'){
+        while (true) {
+            cout << "Enter the new filename: ";
+            cin >> target;
+            if (isValidFilename(target)) break;
             cout << "Invalid file extension. Please enter a valid extension (.jpg, .jpeg, .png, .bmp)." << endl;
-            return;
         }
-        image.saveImage(newFilename);
-        
-        cout<<"Image saved on a new filename"<<endl;
     }
-    else
-    {
-        cout<<"Invalid choice. Image not saved."<<endl;
+    else {
+        cout << "Invalid choice. Image not saved." << endl;
+        return;
     }
+    try{
+        image.saveImage(target);
+        cout << "Image saved on a new filename: " << target << endl;
+    }
+    catch (...) {
+        cout << "Failed to save image. Check the file name or format." << endl;
+        return;
+    }
+    file_name = target;
+    saved = true;
+    cout << "Image saved successfully." << endl;
 }
 
 int main()
@@ -611,23 +628,18 @@ int main()
     Image image;
     bool saved = true;
     load_image(image, filename);
-
-
     while(true) 
-    
     {
-
         menu();
         cin>>choice;
-       if(choice == 1)
+        if(choice == 1)
         {
-
             cout<<"Do you want to save the current image before loading a new one? (y/n): ";
             char saveChoice;
             cin>>saveChoice;
             if(saveChoice == 'y' || saveChoice == 'Y')
             {
-                save_image(image, filename);
+                save_image(image, filename, saved);
             }
             else if(saveChoice == 'n' || saveChoice == 'N')
             {
@@ -637,11 +649,9 @@ int main()
             {
                 cout<<"Invalid choice. Proceeding to load a new image without saving."<<endl;
             }
-            cout<<" Enter image filename: " ;
-            cin>>filename;
-            
-            image.loadNewImage(filename);
-            cout<<"Image loaded"<<endl;
+            load_image(image, filename);
+            saved = true;
+            cout<<"Image loaded."<<endl;
         }
         
         else if (choice == 2)
@@ -679,6 +689,8 @@ int main()
             cin>>type;
 
             applyframefilter(image , colorchoice , type);
+            saved = false;
+            cout<<"Frame Filter applied"<<endl;
         }
 
 
@@ -846,8 +858,7 @@ int main()
 
         else if(choice == 20)
         {
-            save_image(image, filename);
-            saved = true;
+            save_image(image, filename, saved);
         }
 
          
@@ -858,7 +869,7 @@ int main()
                 char exitChoice;
                 cin >> exitChoice;
                 if (exitChoice == 'y' || exitChoice == 'Y') {
-                    save_image(image, filename);
+                    save_image(image, filename, saved);
                 }
             }
             cout << "Exiting the program." << endl;
