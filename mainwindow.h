@@ -5,6 +5,8 @@
 #include <QImage>
 #include <QLabel>
 #include <QPushButton>
+#include<QIcon>
+#include<QSize>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -24,6 +26,10 @@ private slots:
     void onGreyscaleClicked();
     void onBlackAndWhiteClicked();
     void onInvertClicked();
+    void onFrameFilterClicked();
+    void onResizeFilterClicked();
+    void onBlurFilterClicked();
+    void onInfraredFilterClicked();
     
 
 private:
