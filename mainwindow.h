@@ -23,6 +23,7 @@ private slots:
     void onLoadImageClicked();
     void onSaveImageClicked();
     void onUndoClicked();
+    void onThemeToggleClicked();
     void onGreyscaleClicked();
     void onBlackAndWhiteClicked();
     void onInvertClicked();
@@ -40,6 +41,10 @@ private:
     void saveStateForUndo();
     void updateImageDisplay();
     bool hasImage();
+    bool isDarkMode = false;
+    void applyTheme();
+    int getSliderValue(const QString &title, const QString &label, int minval, int maxval, int defval, bool &ok);
+    QImage originalImage;
 };
 
 #endif

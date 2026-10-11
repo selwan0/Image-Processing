@@ -9,19 +9,33 @@
 #include <algorithm>
 #include<QIcon>
 #include<QSize>
+#include <QDialog>
+#include <QSpinBox>
+#include <QCheckBox>
+#include <QFormLayout>
+#include <QDialogButtonBox>
+#include <QLabel>
+#include <QSlider>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    QIcon loadIcon("images.png");
-     ui->pushButton->setIcon(loadIcon);
-     ui->pushButton->setIconSize(QSize(24, 24)); 
-
-    connect(ui->pushButton,    &QPushButton::clicked, this, &MainWindow::onLoadImageClicked); 
-    connect(ui->pushButton_20, &QPushButton::clicked, this, &MainWindow::onSaveImageClicked); 
-    connect(ui->UndoButton,   &QPushButton::clicked, this, &MainWindow::onUndoClicked); 
+    centralWidget()->setStyleSheet("");
+    const auto allWidgets = findChildren<QWidget *>();
+    for (QWidget *w : allWidgets) {
+        w->setStyleSheet("");
+    }
+    ui->LoadButton->setText("Load Image \U0001F4C2");
+    ui->SaveButton->setText("Savw Image \U0001F4BE");
+    ui->UndoButton->setText("UNDO \u21A9");
+    connect(ui->LoadButton,    &QPushButton::clicked, this, &MainWindow::onLoadImageClicked); 
+    connect(ui->SaveButton, &QPushButton::clicked, this, &MainWindow::onSaveImageClicked); 
+    connect(ui->UndoButton, &QPushButton::clicked, this, &MainWindow::onUndoClicked); 
+    connect(ui->ThemeButton , &QPushButton::clicked, this, &MainWindow::onThemeToggleClicked);
     connect(ui->pushButton_2,  &QPushButton::clicked, this, &MainWindow::onGreyscaleClicked); 
     connect(ui->pushButton_3,  &QPushButton::clicked, this, &MainWindow::onBlackAndWhiteClicked);
     connect(ui->pushButton_4,  &QPushButton::clicked, this, &MainWindow::onInvertClicked); 
@@ -29,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pushButton_9, &QPushButton::clicked, this, &MainWindow::onResizeFilterClicked);
     connect(ui->pushButton_13, &QPushButton::clicked, this, &MainWindow::onBlurFilterClicked);
     connect(ui->pushButton_17, &QPushButton::clicked, this, &MainWindow::onInfraredFilterClicked);
+    applyTheme();
 }
 MainWindow::~MainWindow() {
     delete ui;
@@ -55,9 +70,9 @@ void MainWindow::onLoadImageClicked() {
         return;
     }
     currentImage = img.convertToFormat(QImage::Format_ARGB32);
+    originalImage = currentImage;
     imageHistory.clear(); 
     updateImageDisplay();
-    ui->before->setPixmap(QPixmap::fromImage(currentImage).scaled(ui->before->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
     ui->after->clear();
 }
 void MainWindow::onSaveImageClicked() {
@@ -73,10 +88,10 @@ void MainWindow::onSaveImageClicked() {
 }
 
 void MainWindow::updateImageDisplay() {
-    if (currentImage.isNull())
+    if (originalImage.isNull())
         return;
     ui->before->setAlignment(Qt::AlignCenter);
-    ui->before->setPixmap(QPixmap::fromImage(currentImage).scaled(
+    ui->before->setPixmap(QPixmap::fromImage(originalImage).scaled(
         ui->before->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
@@ -92,12 +107,81 @@ void MainWindow::onUndoClicked() {
         return;
     }
     currentImage = imageHistory.takeLast();
-    updateImageDisplay();
+    updateProcessedImage(currentImage);
+}
+void MainWindow::onThemeToggleClicked() {
+    isDarkMode = !isDarkMode;
+    applyTheme();
+}
+void MainWindow::applyTheme(){
+    QString dark = R"(
+    QMainWindow, QWidget#centralwidget {background-color: #12121b ;}
+    QLabel{color: #F7F0F0}
+    QPushButton{
+        background-color: #5f5f72;
+        color: #c1cbeb;
+        border: 2px solid #415a84 ;
+        border-radius: 8px;
+        padding: 6px; 
+        font-weight: bold;
+    }
+    QPushButton:hover{background-color: #45475a;}
+    QPushButton:pressed {background-color: #8db2e3;  color: #1e1e2e; }
+    QScrollArea{ background-color: #292935; border: none;}
+    QWidget#scrollAreaWidgetContents_2{background-color: #1c1c28;}
+    )";
+
+    QString light = R"(
+    QMainWindow, QWidget#centralwidget {background-color: #e8e4eb ;}
+    QLabel{color: #484444}
+    QPushButton{
+        background-color: #e2dff1;
+        color: #1c1c1e;
+        border: 2px solid #d6d6f2 ;
+        border-radius: 8px;
+        padding: 6px; 
+        font-weight: bold;
+    }
+    QPushButton:hover{background-color: #bfc2c9;}
+    QPushButton:pressed {background-color: #8d939b;  color: #fcfcff; }
+    QScrollArea{ background-color: #d0ccd3; border: none;}
+    QWidget#scrollAreaWidgetContents_2{background-color: #dbdbe6;}
+    )";
+
+    setStyleSheet(isDarkMode ? dark : light);
+    ui->ThemeButton->setText(isDarkMode ? "\u2600 Light Mode" : "\u263E Dark Mode");
 }
 
 void MainWindow::updateProcessedImage(const QImage &img) {
     currentImage = img;
     ui->after->setPixmap(QPixmap::fromImage(img).scaled(ui->after->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+}
+int MainWindow::getSliderValue(const QString &title, const QString &label,int minval, int maxval, int defval, bool &ok){
+    QDialog dialog(this);
+    dialog.setWindowTitle(title);
+    QVBoxLayout *layout = new QVBoxLayout(&dialog);
+    layout->addWidget(new QLabel(label, &dialog));
+
+    QSlider *slider = new QSlider(Qt::Horizontal, &dialog);
+    slider->setRange(minval , maxval);
+    slider->setValue(defval);
+
+    QLabel *valueLabel = new QLabel(QString::number(defval) , &dialog);
+    valueLabel->setMinimumWidth(35);
+    valueLabel->setAlignment(Qt::AlignCenter);
+    connect(slider, &QSlider::valueChanged, valueLabel, [valueLabel](int v) { valueLabel->setText(QString::number(v)); });
+    QHBoxLayout *row = new QHBoxLayout;
+    row->addWidget(slider);
+    row->addWidget(valueLabel);
+    layout->addLayout(row);
+
+    QDialogButtonBox *buttons = new QDialogButtonBox( QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+    layout->addWidget(buttons);
+    connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    dialog.setMinimumWidth(300);
+    ok = (dialog.exec() == QDialog::Accepted);
+    return slider->value();
 }
 //***************Filters***************
 void MainWindow::onGreyscaleClicked() {
@@ -143,15 +227,15 @@ void MainWindow::onInvertClicked() {
 
 void MainWindow::onFrameFilterClicked() {
     if (!hasImage()) return;
-    saveStateForUndo();
 
     bool okType;
-    int type = QInputDialog::getInt(this, tr("Frame Type"),  tr("Choose Frame Type:\n1. Simple Frame\n2. Fancy Frame"),    1, 1, 2, 1, &okType);
-    if (!okType) return;  
+    int type = QInputDialog::getInt(this, tr("Frame Type"), tr("Choose Frame Type:\n1. Simple Frame\n2. Fancy Frame"),    1, 1, 2, 1, &okType);
+    if (!okType) return; 
 
     bool okColor;
-    int colorchoice = QInputDialog::getInt(this, tr("Frame Color"),   tr("Choose Color Choice:\n2. Black\n3. Red\n4. Green\n5. Blue"),    2, 2, 5, 1, &okColor);
+    int colorchoice = QInputDialog::getInt(this, tr("Frame Color"), tr("Choose Color Choice:\n1. White\n2. Black\n3. Red\n4. Green\n5. Blue"),    1, 1, 5, 1, &okColor);
     if (!okColor) return;  
+    saveStateForUndo();
 
     int thickness = (currentImage.width() < currentImage.height() ? currentImage.width() : currentImage.height()) / 30;
     if (thickness < 5) thickness = 5;
@@ -186,49 +270,52 @@ void MainWindow::onFrameFilterClicked() {
 
 void MainWindow::onResizeFilterClicked() {
     if (!hasImage()) return;
+    QDialog dialog(this);
+    dialog.setWindowTitle("Resize");
+    QFormLayout *form = new QFormLayout(&dialog);
+    form->addRow(new QLabel("Orignal Size: " + QString::number(currentImage.width()) + " x " + QString::number(currentImage.height())));
+
+    QSpinBox *widthBox = new QSpinBox(&dialog);
+    widthBox->setRange(1,1000000);
+    widthBox->setSingleStep(10);
+    widthBox->setValue(currentImage.width());
+
+    QSpinBox *heightBox = new QSpinBox(&dialog);
+    heightBox->setRange(1,1000000);
+    heightBox->setSingleStep(10);
+    heightBox->setValue(currentImage.height());
+
+    form->addRow("Width: ", widthBox);
+    form->addRow("Height: ", heightBox);
+
+    QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+    form->addRow(buttons);
+    connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
+    if (dialog.exec()!= QDialog::Accepted)return;
+    int new_width = widthBox->value();
+    int new_height = heightBox->value();
+
     saveStateForUndo();
 
-    QString sizeMsg = "Original Size: " + QString::number(currentImage.width()) + " x " + QString::number(currentImage.height()) + "\n\nEnter new width:";
-
-    bool ok1, ok2;
-    int new_width = QInputDialog::getInt(this, "Resize", sizeMsg, currentImage.width(), 1, 100000, 1, &ok1);
-    if (!ok1) return;
-
-    QString heightMsg = "New Width: " + QString::number(new_width) + "\n\nEnter new height:";
-    int new_height = QInputDialog::getInt(this, "Resize", heightMsg, currentImage.height(), 1, 100000, 1, &ok2);
-    if (!ok2) return;
-
     QImage resized_image(new_width, new_height, currentImage.format());
-    
     for (int i = 0; i < new_height; ++i) {
         for (int j = 0; j < new_width; ++j) {
             int orig_i = (i * currentImage.height()) / new_height;
             int orig_j = (j * currentImage.width()) / new_width;
-
             resized_image.setPixel(j, i, currentImage.pixel(orig_j, orig_i));
         }
     }
-    
      currentImage = resized_image;
      updateProcessedImage(currentImage);
-}
-
+} 
 void MainWindow::onBlurFilterClicked() {
     if (!hasImage()) return;
-    saveStateForUndo();
-
     bool ok;
-    int radius = QInputDialog::getInt(
-        this, 
-        "Blur Filter", 
-        "Enter blur radius (Level 1 to 10):", 
-        2,    
-        1,    
-        10,  
-        1,     
-        &ok
-    );
+    int radius = getSliderValue("Blur filter", "Blur Intensity: ", 1, 10, 2, ok);
     if (!ok) return;
+    saveStateForUndo();
 
     QImage sourceImage = currentImage;
     QImage resultImage = currentImage;

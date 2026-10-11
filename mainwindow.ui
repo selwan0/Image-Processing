@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
-    <height>900</height>
+    <width>1041</width>
+    <height>679</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -164,7 +164,7 @@ QPushButton:pressed {
      <string>TextLabel</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_20">
+   <widget class="QPushButton" name="SaveButton">
     <property name="geometry">
      <rect>
       <x>820</x>
@@ -174,14 +174,14 @@ QPushButton:pressed {
      </rect>
     </property>
     <property name="text">
-     <string>savebtn</string>
+     <string>Save Image</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="LoadButton">
     <property name="geometry">
      <rect>
-      <x>270</x>
-      <y>20</y>
+      <x>820</x>
+      <y>470</y>
       <width>150</width>
       <height>46</height>
      </rect>
@@ -202,11 +202,7 @@ QPushButton:pressed {
 }</string>
     </property>
     <property name="text">
-     <string>loadbtn</string>
-    </property>
-    <property name="icon">
-     <iconset>
-      <normaloff>Images/images.png</normaloff>Images/images.png</iconset>
+     <string>Load Image</string>
     </property>
     <property name="iconSize">
      <size>
@@ -219,13 +215,13 @@ QPushButton:pressed {
     <property name="geometry">
      <rect>
       <x>820</x>
-      <y>10</y>
+      <y>20</y>
       <width>146</width>
       <height>46</height>
      </rect>
     </property>
     <property name="text">
-     <string>undobtn</string>
+     <string>UNDO</string>
     </property>
    </widget>
    <widget class="QScrollArea" name="scrollArea_2">
@@ -729,13 +725,26 @@ QPushButton:pressed {
      <string>TextLabel</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="ThemeButton">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>10</y>
+      <width>146</width>
+      <height>46</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>theme</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1000</width>
+     <width>1041</width>
      <height>33</height>
     </rect>
    </property>

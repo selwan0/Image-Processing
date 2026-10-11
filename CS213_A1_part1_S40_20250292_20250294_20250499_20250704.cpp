@@ -621,7 +621,7 @@ void save_image(Image& image , string& file_name, bool& saved){
 }
 
 int main()
-{
+{         
     string filename;
     int choice ;
     int threshold = 128;
