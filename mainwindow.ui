@@ -151,12 +151,12 @@ QPushButton:pressed {
     padding-left: 8px;
 }</string>
    </property>
-   <widget class="QLabel" name="imagelabel">
+   <widget class="QLabel" name="before">
     <property name="geometry">
      <rect>
       <x>270</x>
       <y>150</y>
-      <width>371</width>
+      <width>271</width>
       <height>301</height>
      </rect>
     </property>
@@ -167,8 +167,8 @@ QPushButton:pressed {
    <widget class="QPushButton" name="pushButton_20">
     <property name="geometry">
      <rect>
-      <x>580</x>
-      <y>530</y>
+      <x>820</x>
+      <y>540</y>
       <width>146</width>
       <height>46</height>
      </rect>
@@ -218,8 +218,8 @@ QPushButton:pressed {
    <widget class="QPushButton" name="UndoButton">
     <property name="geometry">
      <rect>
-      <x>560</x>
-      <y>20</y>
+      <x>820</x>
+      <y>10</y>
       <width>146</width>
       <height>46</height>
      </rect>
@@ -715,6 +715,19 @@ QPushButton:pressed {
       </property>
      </widget>
     </widget>
+   </widget>
+   <widget class="QLabel" name="after">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>150</y>
+      <width>321</width>
+      <height>301</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

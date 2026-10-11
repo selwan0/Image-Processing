@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'mainwindow.h'
 **
-** Created by: The Qt Meta Object Compiler version 69 (Qt 6.12.0)
+** Created by: The Qt Meta Object Compiler version 68 (Qt 6.8.3)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -18,8 +18,8 @@
 #include <QtCore/qxptype_traits.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'mainwindow.h' doesn't include <QObject>."
-#elif Q_MOC_OUTPUT_REVISION != 69
-#error "This file was generated using the moc from 6.12.0. It"
+#elif Q_MOC_OUTPUT_REVISION != 68
+#error "This file was generated using the moc from 6.8.3. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -35,48 +35,103 @@ namespace {
 struct qt_meta_tag_ZN10MainWindowE_t {};
 } // unnamed namespace
 
-template <> constexpr inline auto MainWindow::qt_create_metaobjectdata<qt_meta_tag_ZN10MainWindowE_t>()
-{
-    namespace QMC = QtMocConstants;
-    QtMocHelpers::StringRefStorage qt_stringData {
-        "MainWindow",
-        "onLoadImageClicked",
-        "",
-        "onSaveImageClicked",
-        "onUndoClicked",
-        "onGreyscaleClicked",
-        "onBlackAndWhiteClicked",
-        "onInvertClicked"
-    };
 
-    QtMocHelpers::UintData qt_methods {
-        // Slot 'onLoadImageClicked'
-        QtMocHelpers::SlotData<void()>(1, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'onSaveImageClicked'
-        QtMocHelpers::SlotData<void()>(3, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'onUndoClicked'
-        QtMocHelpers::SlotData<void()>(4, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'onGreyscaleClicked'
-        QtMocHelpers::SlotData<void()>(5, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'onBlackAndWhiteClicked'
-        QtMocHelpers::SlotData<void()>(6, 2, QMC::AccessPrivate, QMetaType::Void),
-        // Slot 'onInvertClicked'
-        QtMocHelpers::SlotData<void()>(7, 2, QMC::AccessPrivate, QMetaType::Void),
-    };
-    QtMocHelpers::UintData qt_properties {
-    };
-    QtMocHelpers::UintData qt_enums {
-    };
-    return QtMocHelpers::metaObjectData<MainWindow, qt_meta_tag_ZN10MainWindowE_t>(QMC::MetaObjectFlag{}, qt_stringData,
-            qt_methods, qt_properties, qt_enums);
-}
+#ifdef QT_MOC_HAS_STRINGDATA
+static constexpr auto qt_meta_stringdata_ZN10MainWindowE = QtMocHelpers::stringData(
+    "MainWindow",
+    "onLoadImageClicked",
+    "",
+    "onSaveImageClicked",
+    "onUndoClicked",
+    "onGreyscaleClicked",
+    "onBlackAndWhiteClicked",
+    "onInvertClicked",
+    "onFrameFilterClicked",
+    "onResizeFilterClicked",
+    "onBlurFilterClicked",
+    "onInfraredFilterClicked",
+    "updateProcessedImage",
+    "img"
+);
+#else  // !QT_MOC_HAS_STRINGDATA
+#error "qtmochelpers.h not found or too old."
+#endif // !QT_MOC_HAS_STRINGDATA
+
+Q_CONSTINIT static const uint qt_meta_data_ZN10MainWindowE[] = {
+
+ // content:
+      12,       // revision
+       0,       // classname
+       0,    0, // classinfo
+      11,   14, // methods
+       0,    0, // properties
+       0,    0, // enums/sets
+       0,    0, // constructors
+       0,       // flags
+       0,       // signalCount
+
+ // slots: name, argc, parameters, tag, flags, initial metatype offsets
+       1,    0,   80,    2, 0x08,    1 /* Private */,
+       3,    0,   81,    2, 0x08,    2 /* Private */,
+       4,    0,   82,    2, 0x08,    3 /* Private */,
+       5,    0,   83,    2, 0x08,    4 /* Private */,
+       6,    0,   84,    2, 0x08,    5 /* Private */,
+       7,    0,   85,    2, 0x08,    6 /* Private */,
+       8,    0,   86,    2, 0x08,    7 /* Private */,
+       9,    0,   87,    2, 0x08,    8 /* Private */,
+      10,    0,   88,    2, 0x08,    9 /* Private */,
+      11,    0,   89,    2, 0x08,   10 /* Private */,
+      12,    1,   90,    2, 0x08,   11 /* Private */,
+
+ // slots: parameters
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::QImage,   13,
+
+       0        // eod
+};
+
 Q_CONSTINIT const QMetaObject MainWindow::staticMetaObject = { {
     QMetaObject::SuperData::link<QMainWindow::staticMetaObject>(),
-    qt_staticMetaObjectStaticContent<qt_meta_tag_ZN10MainWindowE_t>.stringdata,
-    qt_staticMetaObjectStaticContent<qt_meta_tag_ZN10MainWindowE_t>.data,
+    qt_meta_stringdata_ZN10MainWindowE.offsetsAndSizes,
+    qt_meta_data_ZN10MainWindowE,
     qt_static_metacall,
     nullptr,
-    qt_staticMetaObjectRelocatingContent<qt_meta_tag_ZN10MainWindowE_t>.metaTypes,
+    qt_incomplete_metaTypeArray<qt_meta_tag_ZN10MainWindowE_t,
+        // Q_OBJECT / Q_GADGET
+        QtPrivate::TypeAndForceComplete<MainWindow, std::true_type>,
+        // method 'onLoadImageClicked'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'onSaveImageClicked'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'onUndoClicked'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'onGreyscaleClicked'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'onBlackAndWhiteClicked'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'onInvertClicked'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'onFrameFilterClicked'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'onResizeFilterClicked'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'onBlurFilterClicked'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'onInfraredFilterClicked'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'updateProcessedImage'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<const QImage &, std::false_type>
+    >,
     nullptr
 } };
 
@@ -91,10 +146,14 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 3: _t->onGreyscaleClicked(); break;
         case 4: _t->onBlackAndWhiteClicked(); break;
         case 5: _t->onInvertClicked(); break;
+        case 6: _t->onFrameFilterClicked(); break;
+        case 7: _t->onResizeFilterClicked(); break;
+        case 8: _t->onBlurFilterClicked(); break;
+        case 9: _t->onInfraredFilterClicked(); break;
+        case 10: _t->updateProcessedImage((*reinterpret_cast< std::add_pointer_t<QImage>>(_a[1]))); break;
         default: ;
         }
     }
-    (void)_a;
 }
 
 const QMetaObject *MainWindow::metaObject() const
@@ -105,7 +164,7 @@ const QMetaObject *MainWindow::metaObject() const
 void *MainWindow::qt_metacast(const char *_clname)
 {
     if (!_clname) return nullptr;
-    if (!strcmp(_clname, qt_staticMetaObjectStaticContent<qt_meta_tag_ZN10MainWindowE_t>.strings))
+    if (!strcmp(_clname, qt_meta_stringdata_ZN10MainWindowE.stringdata0))
         return static_cast<void*>(this);
     return QMainWindow::qt_metacast(_clname);
 }
@@ -116,14 +175,14 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 6)
+        if (_id < 11)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 6;
+        _id -= 11;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 6)
+        if (_id < 11)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 6;
+        _id -= 11;
     }
     return _id;
 }

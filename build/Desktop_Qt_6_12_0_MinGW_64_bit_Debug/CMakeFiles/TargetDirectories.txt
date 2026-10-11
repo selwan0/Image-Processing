@@ -1,5 +1,0 @@
-C:/Users/11/OneDrive/Documents/GitHub/Image-Processing/build/Desktop_Qt_6_12_0_MinGW_64_bit_Debug/CMakeFiles/ImageProcessor.dir
-C:/Users/11/OneDrive/Documents/GitHub/Image-Processing/build/Desktop_Qt_6_12_0_MinGW_64_bit_Debug/CMakeFiles/edit_cache.dir
-C:/Users/11/OneDrive/Documents/GitHub/Image-Processing/build/Desktop_Qt_6_12_0_MinGW_64_bit_Debug/CMakeFiles/rebuild_cache.dir
-C:/Users/11/OneDrive/Documents/GitHub/Image-Processing/build/Desktop_Qt_6_12_0_MinGW_64_bit_Debug/CMakeFiles/ImageProcessor_autogen_timestamp_deps.dir
-C:/Users/11/OneDrive/Documents/GitHub/Image-Processing/build/Desktop_Qt_6_12_0_MinGW_64_bit_Debug/CMakeFiles/ImageProcessor_autogen.dir

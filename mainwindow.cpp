@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->pushButton,    &QPushButton::clicked, this, &MainWindow::onLoadImageClicked); 
     connect(ui->pushButton_20, &QPushButton::clicked, this, &MainWindow::onSaveImageClicked); 
-    connect(ui->UndoButton, &QPushButton::clicked, this, &MainWindow::onUndoClicked); 
+    connect(ui->UndoButton,   &QPushButton::clicked, this, &MainWindow::onUndoClicked); 
     connect(ui->pushButton_2,  &QPushButton::clicked, this, &MainWindow::onGreyscaleClicked); 
     connect(ui->pushButton_3,  &QPushButton::clicked, this, &MainWindow::onBlackAndWhiteClicked);
     connect(ui->pushButton_4,  &QPushButton::clicked, this, &MainWindow::onInvertClicked); 
@@ -57,6 +57,8 @@ void MainWindow::onLoadImageClicked() {
     currentImage = img.convertToFormat(QImage::Format_ARGB32);
     imageHistory.clear(); 
     updateImageDisplay();
+    ui->before->setPixmap(QPixmap::fromImage(currentImage).scaled(ui->before->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    ui->after->clear();
 }
 void MainWindow::onSaveImageClicked() {
     if (!hasImage()) return;
@@ -73,9 +75,9 @@ void MainWindow::onSaveImageClicked() {
 void MainWindow::updateImageDisplay() {
     if (currentImage.isNull())
         return;
-    ui->imagelabel->setAlignment(Qt::AlignCenter);
-    ui->imagelabel->setPixmap(QPixmap::fromImage(currentImage).scaled(
-        ui->imagelabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    ui->before->setAlignment(Qt::AlignCenter);
+    ui->before->setPixmap(QPixmap::fromImage(currentImage).scaled(
+        ui->before->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
 void MainWindow::saveStateForUndo(){
@@ -92,6 +94,11 @@ void MainWindow::onUndoClicked() {
     currentImage = imageHistory.takeLast();
     updateImageDisplay();
 }
+
+void MainWindow::updateProcessedImage(const QImage &img) {
+    currentImage = img;
+    ui->after->setPixmap(QPixmap::fromImage(img).scaled(ui->after->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+}
 //***************Filters***************
 void MainWindow::onGreyscaleClicked() {
     if (!hasImage())return;
@@ -104,7 +111,7 @@ void MainWindow::onGreyscaleClicked() {
             line[x] = qRgba(average, average, average, qAlpha(line[x]));
         }
     }
-    updateImageDisplay();
+    updateProcessedImage(currentImage);
 }
 void MainWindow::onBlackAndWhiteClicked(){
     if (!hasImage()) return;
@@ -117,8 +124,9 @@ void MainWindow::onBlackAndWhiteClicked(){
             line[x] = qRgba(average < threshold ? 0 : 255, average < threshold ? 0 : 255, average < threshold ? 0 : 255, qAlpha(line[x]));
         }
     }
-    updateImageDisplay();
+    updateProcessedImage(currentImage);
 }
+
 void MainWindow::onInvertClicked() {
     if (!hasImage())  return;
     saveStateForUndo();
@@ -130,7 +138,7 @@ void MainWindow::onInvertClicked() {
                             255 - qBlue(line[x]), qAlpha(line[x]));
         }
     }
-    updateImageDisplay();
+    updateProcessedImage(currentImage);
 }
 
 void MainWindow::onFrameFilterClicked() {
@@ -173,8 +181,7 @@ void MainWindow::onFrameFilterClicked() {
             }
         }
     }
-
-    updateImageDisplay();
+    updateProcessedImage(currentImage);
 }
 
 void MainWindow::onResizeFilterClicked() {
@@ -202,11 +209,8 @@ void MainWindow::onResizeFilterClicked() {
         }
     }
     
-    currentImage = resized_image;
-
-    ui->imagelabel->setPixmap(QPixmap::fromImage(currentImage));
-    ui->imagelabel->resize(currentImage.size()); 
-    this->repaint(); 
+     currentImage = resized_image;
+     updateProcessedImage(currentImage);
 }
 
 void MainWindow::onBlurFilterClicked() {
@@ -264,7 +268,7 @@ void MainWindow::onBlurFilterClicked() {
     }
 
     currentImage = resultImage;
-    updateImageDisplay();
+    updateProcessedImage(resultImage);
 }
 
 void MainWindow::onInfraredFilterClicked() {
@@ -290,6 +294,6 @@ void MainWindow::onInfraredFilterClicked() {
             currentImage.setPixel(i, j, qRgb(newRed, newGreen, newBlue));
         }
     }
+    updateProcessedImage(currentImage);
 
-    updateImageDisplay();
 }
