@@ -53,6 +53,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pushButton_4, &QPushButton::clicked, this, &MainWindow::onInvertClicked); 
     connect(ui->pushButton_5, &QPushButton::clicked, this, &MainWindow::onFrameFilterClicked);
     connect(ui->FlipButton, &QPushButton::clicked, this, &MainWindow::onFlipFilterClicked);
+    connect(ui->RotateButton, &QPushButton::clicked, this, &MainWindow::onRotateFilterClicked);
 
     connect(ui->pushButton_9, &QPushButton::clicked, this, &MainWindow::onResizeFilterClicked);
     connect(ui->pushButton_13, &QPushButton::clicked, this, &MainWindow::onBlurFilterClicked);
@@ -199,6 +200,9 @@ void MainWindow::applyTheme(){
     QPushButton[primary="true"]:hover { background-color: #486ca1; }
     QPushButton[primary="true"]:pressed { background-color: #213f67; color: #1e1e2e; }
     QPushButton[primary="true"]:disabled { background-color: #2a2a3a; color: #777; }
+
+    QRadioButton::indicator { width: 16px; height: 16px; border-radius: 9px; border: 2px solid #415a84; background: #1c1c28; }
+    QRadioButton::indicator:checked { background: #8db2e3; }
     )";
 
     QString light = R"(
@@ -232,6 +236,10 @@ void MainWindow::applyTheme(){
     QPushButton[primary="true"]:hover { background-color: #8985bf; }
     QPushButton[primary="true"]:pressed { background-color: #7874b2; }
     QPushButton[primary="true"]:disabled { background-color: #c9c6e0; color: #888; }
+
+    QRadioButton::indicator { width: 16px; height: 16px; border-radius: 9px; border: 2px solid #726f91; background: #ffffff; }
+    QRadioButton::indicator:checked { background: #87859c; }
+     QRadioButton { color: #000000; spacing: 8px; }
     )";
 
     setStyleSheet(isDarkMode ? dark : light);
@@ -277,6 +285,74 @@ int MainWindow::getSliderValue(const QString &title, const QString &label,int mi
     dialog.setMinimumWidth(300);
     ok = (dialog.exec() == QDialog::Accepted);
     return slider->value();
+}
+static QImage rotateImage(const QImage &src, int angle)
+{
+    const int w = src.width(), h = src.height();
+    if (angle == 90) {
+        QImage out(h, w, src.format());
+        for (int y = 0; y < h; ++y) {
+            const QRgb *line = reinterpret_cast<const QRgb *>(src.constScanLine(y));
+            for (int x = 0; x < w; ++x)
+                reinterpret_cast<QRgb *>(out.scanLine(x))[h - 1 - y] = line[x];
+        }
+        return out;
+    }
+    if (angle == 270) {
+        QImage out(h, w, src.format());
+        for (int y = 0; y < h; ++y) {
+            const QRgb *line = reinterpret_cast<const QRgb *>(src.constScanLine(y));
+            for (int x = 0; x < w; ++x)
+                reinterpret_cast<QRgb *>(out.scanLine(w - 1 - x))[y] = line[x];
+        }
+        return out;
+    }
+    QImage out(w, h, src.format());   // 180
+    for (int y = 0; y < h; ++y) {
+        const QRgb *line = reinterpret_cast<const QRgb *>(src.constScanLine(y));
+        QRgb *dst = reinterpret_cast<QRgb *>(out.scanLine(h - 1 - y));
+        for (int x = 0; x < w; ++x)
+            dst[w - 1 - x] = line[x];
+    }
+    return out;
+}
+
+void MainWindow::applyFlip() {
+    const int w = currentImage.width(), h = currentImage.height();
+    const bool horizontal = ui->radioH->isChecked() || ui->radioBoth->isChecked();
+    const bool vertical   = ui->radioV->isChecked() || ui->radioBoth->isChecked();
+
+    if (horizontal)
+        for (int y = 0; y < h; ++y) {
+            QRgb *line = reinterpret_cast<QRgb *>(currentImage.scanLine(y));
+            for (int x = 0; x < w / 2; ++x)
+                std::swap(line[x], line[w - 1 - x]);
+        }
+    if (vertical)
+        for (int y = 0; y < h / 2; ++y) {
+            QRgb *top    = reinterpret_cast<QRgb *>(currentImage.scanLine(y));
+            QRgb *bottom = reinterpret_cast<QRgb *>(currentImage.scanLine(h - 1 - y));
+            for (int x = 0; x < w; ++x)
+                std::swap(top[x], bottom[x]);
+        }
+}
+
+void MainWindow::applyRotate() {
+    int angle = ui->radio90->isChecked()  ? 90
+              : ui->radio270->isChecked() ? 270
+              : 180;
+    currentImage = rotateImage(currentImage, angle);
+}
+
+void MainWindow::onApplyOptionsClicked() {
+    saveStateForUndo();
+    QWidget *page = ui->optionsStack->currentWidget();
+
+    if (page == ui->FlipPage)  applyFlip();
+    else if (page == ui->RotatePage) applyRotate();
+
+    updateProcessedImage(currentImage);
+    ui->optionsPanel->hide();
 }
 
 //***************Filters***************
@@ -363,40 +439,18 @@ void MainWindow::onFrameFilterClicked() {
     }
     updateProcessedImage(currentImage);
 }
-void MainWindow::onFlipFilterClicked(){
+void MainWindow::onFlipFilterClicked() {
     if (!hasImage()) return;
     ui->optionsStack->setCurrentWidget(ui->FlipPage);
     ui->optionsPanel->show();
-    QStringList options ={"Horizontal (left <-> right)" , "Vertical (top <-> bottom) " , "Both"};
-    bool ok;
-    QString choice = QInputDialog::getItem(this,"Flip", "Choose flip direction: " , options , 0, false, &ok);
-    if(!ok) return;
-    saveStateForUndo();
-
-    const int w = currentImage.width();
-    const int h = currentImage.height();
-    const bool horizontal = (choice == options[0] || choice == options[2]);
-    const bool vertical   = (choice == options[1] || choice == options[2]);
-
-    if (horizontal){
-        for (int y=0 ; y < h ; y++){
-            QRgb *line = reinterpret_cast<QRgb*> (currentImage.scanLine(y));
-            for (int x=0 ; x < w /2 ; x++) {
-                std::swap(line[x], line[w -1 -x]);
-            }
-        }
-    }
-    if (vertical) {
-        for (int y = 0; y < h / 2; ++y) {
-            QRgb *top    = reinterpret_cast<QRgb *>(currentImage.scanLine(y));
-            QRgb *bottom = reinterpret_cast<QRgb *>(currentImage.scanLine(h - 1 - y));
-            for (int x = 0; x < w; ++x){
-                std::swap(top[x], bottom[x]);
-            }
-        }
-    }
-    updateProcessedImage(currentImage);
 }
+
+void MainWindow::onRotateFilterClicked() {
+    if (!hasImage()) return;
+    ui->optionsStack->setCurrentWidget(ui->RotatePage);
+    ui->optionsPanel->show();
+}
+
 void MainWindow::onResizeFilterClicked() {
     if (!hasImage()) return;
     QDialog dialog(this);

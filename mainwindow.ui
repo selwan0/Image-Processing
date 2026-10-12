@@ -312,7 +312,7 @@ QPushButton:pressed {
        <string>flip</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_7">
+     <widget class="QPushButton" name="RotateButton">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -815,6 +815,9 @@ QPushButton:pressed {
        <height>41</height>
       </rect>
      </property>
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
      <widget class="QWidget" name="FlipPage">
       <widget class="QRadioButton" name="radioH">
        <property name="geometry">
@@ -826,7 +829,7 @@ QPushButton:pressed {
         </rect>
        </property>
        <property name="text">
-        <string>H</string>
+        <string>Horizontal</string>
        </property>
       </widget>
       <widget class="QRadioButton" name="radioV">
@@ -839,7 +842,7 @@ QPushButton:pressed {
         </rect>
        </property>
        <property name="text">
-        <string>V</string>
+        <string>Vertical</string>
        </property>
       </widget>
       <widget class="QRadioButton" name="radioBoth">
@@ -901,10 +904,10 @@ QPushButton:pressed {
     <widget class="QWidget" name="horizontalLayoutWidget_2">
      <property name="geometry">
       <rect>
-       <x>-40</x>
+       <x>-50</x>
        <y>40</y>
-       <width>561</width>
-       <height>48</height>
+       <width>551</width>
+       <height>41</height>
       </rect>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
