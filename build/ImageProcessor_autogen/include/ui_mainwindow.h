@@ -10,13 +10,14 @@
 #define UI_MAINWINDOW_H
 
 #include <QtCore/QVariant>
-#include <QtGui/QIcon>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QScrollArea>
+#include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QWidget>
 
@@ -26,10 +27,6 @@ class Ui_MainWindow
 {
 public:
     QWidget *centralwidget;
-    QLabel *before;
-    QPushButton *pushButton_20;
-    QPushButton *pushButton;
-    QPushButton *UndoButton;
     QScrollArea *scrollArea_2;
     QWidget *scrollAreaWidgetContents_2;
     QPushButton *pushButton_2;
@@ -50,7 +47,23 @@ public:
     QPushButton *pushButton_17;
     QPushButton *pushButton_18;
     QPushButton *pushButton_19;
+    QPushButton *ThemeButton;
+    QWidget *horizontalLayoutWidget;
+    QHBoxLayout *horizontalLayout;
+    QPushButton *ResetButton;
+    QSpacerItem *verticalSpacer;
+    QPushButton *UndoButton;
+    QPushButton *RedoButton;
+    QWidget *layoutWidget;
+    QHBoxLayout *horizontalLayout_8;
+    QLabel *before;
+    QSpacerItem *verticalSpacer_2;
     QLabel *after;
+    QWidget *widget;
+    QHBoxLayout *horizontalLayout_2;
+    QPushButton *LoadButton;
+    QSpacerItem *verticalSpacer_3;
+    QPushButton *SaveButton;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -58,7 +71,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName("MainWindow");
-        MainWindow->resize(1000, 900);
+        MainWindow->resize(1041, 679);
         QSizePolicy sizePolicy(QSizePolicy::Policy::Fixed, QSizePolicy::Policy::Fixed);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -142,32 +155,6 @@ public:
 "    padding-top: 8px;\n"
 "    padding-left: 8px;\n"
 "}"));
-        before = new QLabel(centralwidget);
-        before->setObjectName("before");
-        before->setGeometry(QRect(270, 150, 271, 301));
-        pushButton_20 = new QPushButton(centralwidget);
-        pushButton_20->setObjectName("pushButton_20");
-        pushButton_20->setGeometry(QRect(820, 540, 146, 46));
-        pushButton = new QPushButton(centralwidget);
-        pushButton->setObjectName("pushButton");
-        pushButton->setGeometry(QRect(270, 20, 150, 46));
-        QSizePolicy sizePolicy1(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Fixed);
-        sizePolicy1.setHorizontalStretch(140);
-        sizePolicy1.setVerticalStretch(140);
-        sizePolicy1.setHeightForWidth(pushButton->sizePolicy().hasHeightForWidth());
-        pushButton->setSizePolicy(sizePolicy1);
-        pushButton->setLayoutDirection(Qt::LayoutDirection::RightToLeft);
-        pushButton->setStyleSheet(QString::fromUtf8("QPushButton {\n"
-"    text-align: right;\n"
-"    padding-right: 10px;\n"
-"}"));
-        QIcon icon;
-        icon.addFile(QString::fromUtf8("Images/images.png"), QSize(), QIcon::Mode::Normal, QIcon::State::Off);
-        pushButton->setIcon(icon);
-        pushButton->setIconSize(QSize(24, 24));
-        UndoButton = new QPushButton(centralwidget);
-        UndoButton->setObjectName("UndoButton");
-        UndoButton->setGeometry(QRect(820, 10, 146, 46));
         scrollArea_2 = new QScrollArea(centralwidget);
         scrollArea_2->setObjectName("scrollArea_2");
         scrollArea_2->setGeometry(QRect(20, 10, 171, 671));
@@ -179,11 +166,11 @@ public:
         pushButton_2 = new QPushButton(scrollAreaWidgetContents_2);
         pushButton_2->setObjectName("pushButton_2");
         pushButton_2->setGeometry(QRect(10, 0, 146, 46));
-        QSizePolicy sizePolicy2(QSizePolicy::Policy::Fixed, QSizePolicy::Policy::Fixed);
-        sizePolicy2.setHorizontalStretch(140);
-        sizePolicy2.setVerticalStretch(140);
-        sizePolicy2.setHeightForWidth(pushButton_2->sizePolicy().hasHeightForWidth());
-        pushButton_2->setSizePolicy(sizePolicy2);
+        QSizePolicy sizePolicy1(QSizePolicy::Policy::Fixed, QSizePolicy::Policy::Fixed);
+        sizePolicy1.setHorizontalStretch(140);
+        sizePolicy1.setVerticalStretch(140);
+        sizePolicy1.setHeightForWidth(pushButton_2->sizePolicy().hasHeightForWidth());
+        pushButton_2->setSizePolicy(sizePolicy1);
         pushButton_2->setMinimumSize(QSize(146, 46));
         pushButton_2->setMaximumSize(QSize(146, 46));
         pushButton_3 = new QPushButton(scrollAreaWidgetContents_2);
@@ -192,8 +179,8 @@ public:
         pushButton_4 = new QPushButton(scrollAreaWidgetContents_2);
         pushButton_4->setObjectName("pushButton_4");
         pushButton_4->setGeometry(QRect(10, 100, 146, 46));
-        sizePolicy2.setHeightForWidth(pushButton_4->sizePolicy().hasHeightForWidth());
-        pushButton_4->setSizePolicy(sizePolicy2);
+        sizePolicy1.setHeightForWidth(pushButton_4->sizePolicy().hasHeightForWidth());
+        pushButton_4->setSizePolicy(sizePolicy1);
         pushButton_4->setMinimumSize(QSize(146, 46));
         pushButton_4->setMaximumSize(QSize(146, 46));
         pushButton_5 = new QPushButton(scrollAreaWidgetContents_2);
@@ -220,8 +207,8 @@ public:
         pushButton_8 = new QPushButton(scrollAreaWidgetContents_2);
         pushButton_8->setObjectName("pushButton_8");
         pushButton_8->setGeometry(QRect(10, 300, 146, 46));
-        sizePolicy2.setHeightForWidth(pushButton_8->sizePolicy().hasHeightForWidth());
-        pushButton_8->setSizePolicy(sizePolicy2);
+        sizePolicy1.setHeightForWidth(pushButton_8->sizePolicy().hasHeightForWidth());
+        pushButton_8->setSizePolicy(sizePolicy1);
         pushButton_8->setMinimumSize(QSize(146, 46));
         pushButton_8->setMaximumSize(QSize(146, 46));
         pushButton_9 = new QPushButton(scrollAreaWidgetContents_2);
@@ -234,32 +221,35 @@ public:
         pushButton_10 = new QPushButton(scrollAreaWidgetContents_2);
         pushButton_10->setObjectName("pushButton_10");
         pushButton_10->setGeometry(QRect(10, 400, 146, 46));
-        sizePolicy2.setHeightForWidth(pushButton_10->sizePolicy().hasHeightForWidth());
-        pushButton_10->setSizePolicy(sizePolicy2);
+        sizePolicy1.setHeightForWidth(pushButton_10->sizePolicy().hasHeightForWidth());
+        pushButton_10->setSizePolicy(sizePolicy1);
         pushButton_10->setMinimumSize(QSize(146, 46));
         pushButton_10->setMaximumSize(QSize(146, 46));
         pushButton_11 = new QPushButton(scrollAreaWidgetContents_2);
         pushButton_11->setObjectName("pushButton_11");
         pushButton_11->setGeometry(QRect(10, 450, 146, 46));
-        sizePolicy1.setHeightForWidth(pushButton_11->sizePolicy().hasHeightForWidth());
-        pushButton_11->setSizePolicy(sizePolicy1);
+        QSizePolicy sizePolicy2(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Fixed);
+        sizePolicy2.setHorizontalStretch(140);
+        sizePolicy2.setVerticalStretch(140);
+        sizePolicy2.setHeightForWidth(pushButton_11->sizePolicy().hasHeightForWidth());
+        pushButton_11->setSizePolicy(sizePolicy2);
         pushButton_12 = new QPushButton(scrollAreaWidgetContents_2);
         pushButton_12->setObjectName("pushButton_12");
         pushButton_12->setGeometry(QRect(10, 500, 146, 46));
-        sizePolicy2.setHeightForWidth(pushButton_12->sizePolicy().hasHeightForWidth());
-        pushButton_12->setSizePolicy(sizePolicy2);
+        sizePolicy1.setHeightForWidth(pushButton_12->sizePolicy().hasHeightForWidth());
+        pushButton_12->setSizePolicy(sizePolicy1);
         pushButton_12->setMinimumSize(QSize(146, 46));
         pushButton_12->setMaximumSize(QSize(146, 46));
         pushButton_13 = new QPushButton(scrollAreaWidgetContents_2);
         pushButton_13->setObjectName("pushButton_13");
         pushButton_13->setGeometry(QRect(10, 550, 146, 46));
-        sizePolicy1.setHeightForWidth(pushButton_13->sizePolicy().hasHeightForWidth());
-        pushButton_13->setSizePolicy(sizePolicy1);
+        sizePolicy2.setHeightForWidth(pushButton_13->sizePolicy().hasHeightForWidth());
+        pushButton_13->setSizePolicy(sizePolicy2);
         pushButton_14 = new QPushButton(scrollAreaWidgetContents_2);
         pushButton_14->setObjectName("pushButton_14");
         pushButton_14->setGeometry(QRect(10, 600, 146, 46));
-        sizePolicy2.setHeightForWidth(pushButton_14->sizePolicy().hasHeightForWidth());
-        pushButton_14->setSizePolicy(sizePolicy2);
+        sizePolicy1.setHeightForWidth(pushButton_14->sizePolicy().hasHeightForWidth());
+        pushButton_14->setSizePolicy(sizePolicy1);
         pushButton_14->setMinimumSize(QSize(146, 46));
         pushButton_14->setMaximumSize(QSize(146, 46));
         pushButton_15 = new QPushButton(scrollAreaWidgetContents_2);
@@ -268,8 +258,8 @@ public:
         pushButton_16 = new QPushButton(scrollAreaWidgetContents_2);
         pushButton_16->setObjectName("pushButton_16");
         pushButton_16->setGeometry(QRect(10, 700, 146, 46));
-        sizePolicy2.setHeightForWidth(pushButton_16->sizePolicy().hasHeightForWidth());
-        pushButton_16->setSizePolicy(sizePolicy2);
+        sizePolicy1.setHeightForWidth(pushButton_16->sizePolicy().hasHeightForWidth());
+        pushButton_16->setSizePolicy(sizePolicy1);
         pushButton_16->setMinimumSize(QSize(146, 46));
         pushButton_16->setMaximumSize(QSize(146, 46));
         pushButton_17 = new QPushButton(scrollAreaWidgetContents_2);
@@ -278,21 +268,94 @@ public:
         pushButton_18 = new QPushButton(scrollAreaWidgetContents_2);
         pushButton_18->setObjectName("pushButton_18");
         pushButton_18->setGeometry(QRect(10, 800, 146, 46));
-        sizePolicy2.setHeightForWidth(pushButton_18->sizePolicy().hasHeightForWidth());
-        pushButton_18->setSizePolicy(sizePolicy2);
+        sizePolicy1.setHeightForWidth(pushButton_18->sizePolicy().hasHeightForWidth());
+        pushButton_18->setSizePolicy(sizePolicy1);
         pushButton_18->setMinimumSize(QSize(146, 46));
         pushButton_18->setMaximumSize(QSize(146, 46));
         pushButton_19 = new QPushButton(scrollAreaWidgetContents_2);
         pushButton_19->setObjectName("pushButton_19");
         pushButton_19->setGeometry(QRect(10, 850, 146, 46));
         scrollArea_2->setWidget(scrollAreaWidgetContents_2);
-        after = new QLabel(centralwidget);
+        ThemeButton = new QPushButton(centralwidget);
+        ThemeButton->setObjectName("ThemeButton");
+        ThemeButton->setGeometry(QRect(240, 10, 146, 46));
+        horizontalLayoutWidget = new QWidget(centralwidget);
+        horizontalLayoutWidget->setObjectName("horizontalLayoutWidget");
+        horizontalLayoutWidget->setGeometry(QRect(580, 0, 486, 80));
+        horizontalLayout = new QHBoxLayout(horizontalLayoutWidget);
+        horizontalLayout->setObjectName("horizontalLayout");
+        horizontalLayout->setContentsMargins(0, 0, 0, 0);
+        ResetButton = new QPushButton(horizontalLayoutWidget);
+        ResetButton->setObjectName("ResetButton");
+
+        horizontalLayout->addWidget(ResetButton);
+
+        verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Expanding);
+
+        horizontalLayout->addItem(verticalSpacer);
+
+        UndoButton = new QPushButton(horizontalLayoutWidget);
+        UndoButton->setObjectName("UndoButton");
+
+        horizontalLayout->addWidget(UndoButton);
+
+        RedoButton = new QPushButton(horizontalLayoutWidget);
+        RedoButton->setObjectName("RedoButton");
+
+        horizontalLayout->addWidget(RedoButton);
+
+        layoutWidget = new QWidget(centralwidget);
+        layoutWidget->setObjectName("layoutWidget");
+        layoutWidget->setGeometry(QRect(220, 90, 821, 391));
+        horizontalLayout_8 = new QHBoxLayout(layoutWidget);
+        horizontalLayout_8->setObjectName("horizontalLayout_8");
+        horizontalLayout_8->setContentsMargins(0, 0, 0, 0);
+        before = new QLabel(layoutWidget);
+        before->setObjectName("before");
+
+        horizontalLayout_8->addWidget(before);
+
+        verticalSpacer_2 = new QSpacerItem(20, 40, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Expanding);
+
+        horizontalLayout_8->addItem(verticalSpacer_2);
+
+        after = new QLabel(layoutWidget);
         after->setObjectName("after");
-        after->setGeometry(QRect(620, 150, 321, 301));
+
+        horizontalLayout_8->addWidget(after);
+
+        widget = new QWidget(centralwidget);
+        widget->setObjectName("widget");
+        widget->setGeometry(QRect(340, 500, 531, 41));
+        horizontalLayout_2 = new QHBoxLayout(widget);
+        horizontalLayout_2->setObjectName("horizontalLayout_2");
+        horizontalLayout_2->setContentsMargins(0, 0, 0, 0);
+        LoadButton = new QPushButton(widget);
+        LoadButton->setObjectName("LoadButton");
+        sizePolicy2.setHeightForWidth(LoadButton->sizePolicy().hasHeightForWidth());
+        LoadButton->setSizePolicy(sizePolicy2);
+        LoadButton->setLayoutDirection(Qt::LayoutDirection::RightToLeft);
+        LoadButton->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"    text-align: right;\n"
+"    padding-right: 10px;\n"
+"}"));
+        LoadButton->setIconSize(QSize(24, 24));
+
+        horizontalLayout_2->addWidget(LoadButton);
+
+        verticalSpacer_3 = new QSpacerItem(20, 40, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Expanding);
+
+        horizontalLayout_2->addItem(verticalSpacer_3);
+
+        SaveButton = new QPushButton(widget);
+        SaveButton->setObjectName("SaveButton");
+
+        horizontalLayout_2->addWidget(SaveButton);
+
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
-        menubar->setGeometry(QRect(0, 0, 1000, 33));
+        menubar->setGeometry(QRect(0, 0, 1041, 33));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName("statusbar");
@@ -306,10 +369,6 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
-        before->setText(QCoreApplication::translate("MainWindow", "TextLabel", nullptr));
-        pushButton_20->setText(QCoreApplication::translate("MainWindow", "savebtn", nullptr));
-        pushButton->setText(QCoreApplication::translate("MainWindow", "loadbtn", nullptr));
-        UndoButton->setText(QCoreApplication::translate("MainWindow", "undobtn", nullptr));
         pushButton_2->setText(QCoreApplication::translate("MainWindow", "greyscale ", nullptr));
         pushButton_3->setText(QCoreApplication::translate("MainWindow", "black and white", nullptr));
         pushButton_4->setText(QCoreApplication::translate("MainWindow", "invert", nullptr));
@@ -328,7 +387,14 @@ public:
         pushButton_17->setText(QCoreApplication::translate("MainWindow", "infrared", nullptr));
         pushButton_18->setText(QCoreApplication::translate("MainWindow", "skew", nullptr));
         pushButton_19->setText(QCoreApplication::translate("MainWindow", "oil painting", nullptr));
-        after->setText(QCoreApplication::translate("MainWindow", "TextLabel", nullptr));
+        ThemeButton->setText(QCoreApplication::translate("MainWindow", "theme", nullptr));
+        ResetButton->setText(QCoreApplication::translate("MainWindow", "Reset", nullptr));
+        UndoButton->setText(QCoreApplication::translate("MainWindow", "UNDO", nullptr));
+        RedoButton->setText(QCoreApplication::translate("MainWindow", "REDO", nullptr));
+        before->setText(QCoreApplication::translate("MainWindow", "Load Image", nullptr));
+        after->setText(QCoreApplication::translate("MainWindow", "Wait.....", nullptr));
+        LoadButton->setText(QCoreApplication::translate("MainWindow", "Load Image", nullptr));
+        SaveButton->setText(QCoreApplication::translate("MainWindow", "Save Image", nullptr));
     } // retranslateUi
 
 };

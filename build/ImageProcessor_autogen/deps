@@ -451,6 +451,7 @@ ImageProcessor_autogen/timestamp: \
 	C:/Users/DELL/Documents/GitHub/Image-Processing/main.cpp \
 	C:/Users/DELL/Documents/GitHub/Image-Processing/mainwindow.cpp \
 	C:/Users/DELL/Documents/GitHub/Image-Processing/mainwindow.h \
+	C:/Users/DELL/Documents/GitHub/Image-Processing/resources.qrc \
 	C:/msys64/mingw64/include/_mingw.h \
 	C:/msys64/mingw64/include/_mingw_mac.h \
 	C:/msys64/mingw64/include/_mingw_off_t.h \

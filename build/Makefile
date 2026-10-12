@@ -154,6 +154,30 @@ ImageProcessor_autogen/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\ImageProcessor_autogen.dir\build.make CMakeFiles/ImageProcessor_autogen.dir/build
 .PHONY : ImageProcessor_autogen/fast
 
+ImageProcessor_autogen/EWIEGA46WW/qrc_resources.obj: ImageProcessor_autogen/EWIEGA46WW/qrc_resources.cpp.obj
+.PHONY : ImageProcessor_autogen/EWIEGA46WW/qrc_resources.obj
+
+# target to build an object file
+ImageProcessor_autogen/EWIEGA46WW/qrc_resources.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\ImageProcessor.dir\build.make CMakeFiles/ImageProcessor.dir/ImageProcessor_autogen/EWIEGA46WW/qrc_resources.cpp.obj
+.PHONY : ImageProcessor_autogen/EWIEGA46WW/qrc_resources.cpp.obj
+
+ImageProcessor_autogen/EWIEGA46WW/qrc_resources.i: ImageProcessor_autogen/EWIEGA46WW/qrc_resources.cpp.i
+.PHONY : ImageProcessor_autogen/EWIEGA46WW/qrc_resources.i
+
+# target to preprocess a source file
+ImageProcessor_autogen/EWIEGA46WW/qrc_resources.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\ImageProcessor.dir\build.make CMakeFiles/ImageProcessor.dir/ImageProcessor_autogen/EWIEGA46WW/qrc_resources.cpp.i
+.PHONY : ImageProcessor_autogen/EWIEGA46WW/qrc_resources.cpp.i
+
+ImageProcessor_autogen/EWIEGA46WW/qrc_resources.s: ImageProcessor_autogen/EWIEGA46WW/qrc_resources.cpp.s
+.PHONY : ImageProcessor_autogen/EWIEGA46WW/qrc_resources.s
+
+# target to generate assembly for a file
+ImageProcessor_autogen/EWIEGA46WW/qrc_resources.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\ImageProcessor.dir\build.make CMakeFiles/ImageProcessor.dir/ImageProcessor_autogen/EWIEGA46WW/qrc_resources.cpp.s
+.PHONY : ImageProcessor_autogen/EWIEGA46WW/qrc_resources.cpp.s
+
 ImageProcessor_autogen/mocs_compilation.obj: ImageProcessor_autogen/mocs_compilation.cpp.obj
 .PHONY : ImageProcessor_autogen/mocs_compilation.obj
 
@@ -237,6 +261,9 @@ help:
 	@echo ... ImageProcessor_autogen
 	@echo ... ImageProcessor_autogen_timestamp_deps
 	@echo ... ImageProcessor
+	@echo ... ImageProcessor_autogen/EWIEGA46WW/qrc_resources.obj
+	@echo ... ImageProcessor_autogen/EWIEGA46WW/qrc_resources.i
+	@echo ... ImageProcessor_autogen/EWIEGA46WW/qrc_resources.s
 	@echo ... ImageProcessor_autogen/mocs_compilation.obj
 	@echo ... ImageProcessor_autogen/mocs_compilation.i
 	@echo ... ImageProcessor_autogen/mocs_compilation.s
