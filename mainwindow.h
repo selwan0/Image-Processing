@@ -37,6 +37,8 @@ private slots:
     void onBlurFilterClicked();
     void onInfraredFilterClicked();
     void updateProcessedImage(const QImage &img);
+    void onRotateClicked();
+    void onMergeClicked();
     
 
 private:

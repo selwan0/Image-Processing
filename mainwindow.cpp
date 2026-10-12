@@ -20,6 +20,9 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGraphicsDropShadowEffect>
+#include <QInputDialog>
+#include<QTransform>
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -58,6 +61,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pushButton_9, &QPushButton::clicked, this, &MainWindow::onResizeFilterClicked);
     connect(ui->pushButton_13, &QPushButton::clicked, this, &MainWindow::onBlurFilterClicked);
     connect(ui->pushButton_17, &QPushButton::clicked, this, &MainWindow::onInfraredFilterClicked);
+    connect(ui->pushButton_7, &QPushButton::clicked, this, &MainWindow::onRotateClicked);
+    connect(ui->pushButton_10,&QPushButton::clicked, this, &MainWindow::onMergeClicked);
     const QList<QPushButton *> roundButtons ={ ui->ResetButton , ui->UndoButton, ui->RedoButton};
     for (QPushButton *b : roundButtons){
         b->setText("");
@@ -566,4 +571,94 @@ void MainWindow::onInfraredFilterClicked() {
     }
     updateProcessedImage(currentImage);
 
+}
+
+
+void MainWindow::onRotateClicked() {
+    if (!hasImage()) return;
+
+    bool ok;
+    int angle = getSliderValue("Rotate", "Angle: ", 0, 360, 90, ok);
+    if (!ok) return;
+
+    saveStateForUndo();
+
+    currentImage = currentImage.transformed(QTransform().rotate(angle));
+    updateProcessedImage(currentImage);
+}
+
+void MainWindow::onMergeClicked() {
+    if (!hasImage()) return;
+
+    QString path = QFileDialog::getOpenFileName(this, "Choose second image", "",  "Images (*.png *.jpg *.jpeg *.bmp)");
+    if (path.isEmpty()) return;
+
+    QImage image2;
+    if (!image2.load(path)) return;
+
+    QImage image1 = currentImage;
+
+    image1 = image1.convertToFormat(QImage::Format_RGB32);
+    image2 = image2.convertToFormat(QImage::Format_RGB32);
+
+    int w1 = image1.width(),  h1 = image1.height();
+    int w2 = image2.width(),  h2 = image2.height();
+
+    int W, H, mode = 0;
+
+    if (w1 == w2 && h1 == h2) {
+        W = w1;
+        H = h1;
+    }
+    else {
+        QStringList options;
+        options << "Resize to the biggest" << "Crop to the smallest";
+        bool ok;
+        QString choice = QInputDialog::getItem(this, "Merge", "Images have different sizes:",  options, 0, false, &ok);
+        if (!ok) return;
+
+        if (choice == options[0]) {
+            mode = 1;
+            W = std::max(w1, w2);
+            H = std::max(h1, h2);
+        } else {
+            mode = 2;
+            W = std::min(w1, w2);
+            H = std::min(h1, h2);
+        }
+    }
+
+    saveStateForUndo();
+
+    QImage outputImage(W, H, QImage::Format_RGB32);
+
+    for (int i = 0; i < W; ++i) {
+        for (int j = 0; j < H; ++j) {
+            int i1, j1, i2, j2;
+
+            if (mode == 2) {
+                i1 = i + (w1 - W) / 2;
+                j1 = j + (h1 - H) / 2;
+                i2 = i + (w2 - W) / 2;
+                j2 = j + (h2 - H) / 2;
+            } else {
+                i1 = i * w1 / W;
+                j1 = j * h1 / H;
+                i2 = i * w2 / W;
+                j2 = j * h2 / H;
+            }
+
+            QRgb p1 = image1.pixel(i1, j1);
+            QRgb p2 = image2.pixel(i2, j2);
+
+            int r = (qRed(p1)   + qRed(p2))   / 2;
+            int g = (qGreen(p1) + qGreen(p2)) / 2;
+            int b = (qBlue(p1)  + qBlue(p2))  / 2;
+
+            outputImage.setPixel(i, j, qRgb(r, g, b));
+        }
+    }
+
+    currentImage = outputImage;
+    updateProcessedImage(currentImage);
 }
