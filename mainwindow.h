@@ -39,7 +39,16 @@ private slots:
     void updateProcessedImage(const QImage &img);
     void onRotateClicked();
     void onMergeClicked();
+    void onDarkenAndLightenClicked();
+    void onDetectEdgesClicked();
+    void onSunlightClicked();
+    void onPurpleFilterClicked();
+    void onOilPaintingClicked();
+    void onOldTvClicked();
+    void onCropFilterClicked();
+    void onSkewFilterClicked();
     
+
 
 private:
     Ui::MainWindow *ui;

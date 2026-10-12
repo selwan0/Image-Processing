@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "./ui_mainwindow.h"
+#include "ui_mainwindow.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QStringList>
@@ -22,6 +22,8 @@
 #include <QGraphicsDropShadowEffect>
 #include <QInputDialog>
 #include<QTransform>
+#include <cstdlib>
+#include <cmath>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -57,11 +59,17 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pushButton_5, &QPushButton::clicked, this, &MainWindow::onFrameFilterClicked);
     connect(ui->FlipButton, &QPushButton::clicked, this, &MainWindow::onFlipFilterClicked);
     connect(ui->RotateButton, &QPushButton::clicked, this, &MainWindow::onRotateFilterClicked);
-
+    connect(ui->DarkenLightenButton, &QPushButton::clicked, this, &MainWindow::onDarkenAndLightenClicked);
+    connect(ui->DetectButton, &QPushButton::clicked, this, &MainWindow::onDetectEdgesClicked);
+    connect(ui->SunlightButton, &QPushButton::clicked, this, &MainWindow::onSunlightClicked);
+    connect(ui->PurpleButton, &QPushButton::clicked, this, &MainWindow::onPurpleFilterClicked);
+    connect(ui->OilpaintingButton, &QPushButton::clicked, this, &MainWindow::onOilPaintingClicked);
+    connect(ui->OldTvButton, &QPushButton::clicked, this, &MainWindow::onOldTvClicked);
+    connect(ui->CropButton, &QPushButton::clicked, this, &MainWindow::onCropFilterClicked);
+    connect(ui->SkewButton, &QPushButton::clicked, this, &MainWindow::onSkewFilterClicked);
     connect(ui->pushButton_9, &QPushButton::clicked, this, &MainWindow::onResizeFilterClicked);
     connect(ui->pushButton_13, &QPushButton::clicked, this, &MainWindow::onBlurFilterClicked);
     connect(ui->pushButton_17, &QPushButton::clicked, this, &MainWindow::onInfraredFilterClicked);
-    connect(ui->pushButton_7, &QPushButton::clicked, this, &MainWindow::onRotateClicked);
     connect(ui->pushButton_10,&QPushButton::clicked, this, &MainWindow::onMergeClicked);
     const QList<QPushButton *> roundButtons ={ ui->ResetButton , ui->UndoButton, ui->RedoButton};
     for (QPushButton *b : roundButtons){
@@ -119,15 +127,15 @@ void MainWindow::onSaveImageClicked() {
             QMessageBox::warning(this, "Error", "Could not save the image.");
     }
 }
-
+static void showScaled(QLabel *label, const QImage &img)
+{
+    label->setAlignment(Qt::AlignCenter);
+    QSize area = label->size() - QSize(16, 16);
+    label->setPixmap(QPixmap::fromImage(img).scaled(area, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+}
 void MainWindow::updateImageDisplay() {
-    if (originalImage.isNull())
-        return;
-    ui->before->setAlignment(Qt::AlignCenter);
-    ui->before->setPixmap(QPixmap::fromImage(originalImage).scaled( ui->before->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-
-    QSize area = ui->before->size() - QSize(16, 16);
-    ui->before->setPixmap(QPixmap::fromImage(originalImage).scaled(area, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    if (originalImage.isNull()) return;
+    showScaled(ui->before, originalImage);
 }
 
 void MainWindow::saveStateForUndo(){
@@ -262,7 +270,7 @@ void MainWindow::applyTheme(){
 
 void MainWindow::updateProcessedImage(const QImage &img) {
     currentImage = img;
-    ui->after->setPixmap(QPixmap::fromImage(img).scaled(ui->after->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+     showScaled(ui->after, img);
 }
 int MainWindow::getSliderValue(const QString &title, const QString &label,int minval, int maxval, int defval, bool &ok){
     QDialog dialog(this);
@@ -545,7 +553,97 @@ void MainWindow::onBlurFilterClicked() {
     currentImage = resultImage;
     updateProcessedImage(resultImage);
 }
+void MainWindow::onDarkenAndLightenClicked() {
+    if (!hasImage()) return;
+    bool ok;
+    int value = getSliderValue("Darken & Lighten", "Brightness (-100 = darker, +100 = lighter): ", -100, 100, 0, ok);
+    if (!ok || value == 0) return;
+    saveStateForUndo();
 
+    const double factor = 1.0 + value / 100.0;   // -50 -> x0.5 , +50 -> x1.5
+
+    for (int y = 0; y < currentImage.height(); ++y) {
+        QRgb *line = reinterpret_cast<QRgb *>(currentImage.scanLine(y));
+        for (int x = 0; x < currentImage.width(); ++x) {
+            int r = std::min(255, int(qRed(line[x])   * factor));
+            int g = std::min(255, int(qGreen(line[x]) * factor));
+            int b = std::min(255, int(qBlue(line[x])  * factor));
+            line[x] = qRgba(r, g, b, qAlpha(line[x]));
+        }
+    }
+    updateProcessedImage(currentImage);
+}
+void MainWindow::onDetectEdgesClicked() {
+    if (!hasImage()) return;
+    const int threshold = 100;
+    saveStateForUndo();
+    const int w = currentImage.width();
+    const int h = currentImage.height();
+    QVector<int> gray(w * h);
+    for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x) {
+            QRgb p = currentImage.pixel(x, y);
+            gray[y * w + x] = (qRed(p) + qGreen(p) + qBlue(p)) / 3;
+        }
+    }
+    static const int gx[3][3] = {{-1, 0, 1}, {-2, 0, 2}, {-1, 0, 1}};
+    static const int gy[3][3] = {{-1, -2, -1}, {0, 0, 0}, {1, 2, 1}};
+    QImage result(w, h, QImage::Format_ARGB32);
+    result.fill(Qt::white);
+    for (int y = 1; y < h - 1; ++y) {
+        for (int x = 1; x < w - 1; ++x) {
+            int sumx = 0, sumy = 0;
+            for (int a = -1; a <= 1; ++a) {
+                for (int b = -1; b <= 1; ++b) {
+                    int px = gray[(y + a) * w + (x + b)];
+                    sumx += px * gx[a + 1][b + 1];
+                    sumy += px * gy[a + 1][b + 1];
+                }
+            }
+            int value = (qAbs(sumx) + qAbs(sumy) > threshold) ? 0 : 255;
+            result.setPixel(x, y, qRgb(value, value, value));
+        }
+    }
+    currentImage = result;
+    updateProcessedImage(currentImage);
+}
+void MainWindow::onSunlightClicked() {
+    if (!hasImage()) return;
+    saveStateForUndo();
+    for (int y = 0; y < currentImage.height(); ++y) {
+        QRgb *line = reinterpret_cast<QRgb *>(currentImage.scanLine(y));
+        for (int x = 0; x < currentImage.width(); ++x) {
+            int red   = std::min(255, int(qRed(line[x])   * 1.25 + 20));
+            int green = std::min(255, int(qGreen(line[x]) * 1.20 + 15));
+            int blue  = std::max(0,   int(qBlue(line[x])  * 0.8));
+            line[x] = qRgba(red, green, blue, qAlpha(line[x]));
+        }
+    }
+    updateProcessedImage(currentImage);
+}
+void MainWindow::onPurpleFilterClicked() {
+    if (!hasImage()) return;
+    bool ok;
+    int strength = getSliderValue("Purple filter", "Purple Intensity:", 1, 100, 30, ok);
+    if(!ok) return;
+    saveStateForUndo();
+
+    for (int y = 0; y < currentImage.height(); ++y) {
+        QRgb *line = reinterpret_cast<QRgb *>(currentImage.scanLine(y));
+        for (int x = 0; x < currentImage.width(); ++x) {
+            int red   = qRed(line[x]);
+            int green = qGreen(line[x]);
+            int blue  = qBlue(line[x]);
+
+            int newRed   = std::min((red * strength) / 100 + red, 255);
+            int newGreen = std::max(green - (green * strength) / 100, 0);
+            int newBlue  = std::min((blue * strength) / 100 + blue, 255);
+
+            line[x] = qRgba(newRed, newGreen, newBlue, qAlpha(line[x]));
+        }
+    }
+    updateProcessedImage(currentImage);
+}
 void MainWindow::onInfraredFilterClicked() {
     if (!hasImage()) return;
     saveStateForUndo();
@@ -607,8 +705,7 @@ void MainWindow::onMergeClicked() {
     int W, H, mode = 0;
 
     if (w1 == w2 && h1 == h2) {
-        W = w1;
-        H = h1;
+        W = w1;  H = h1;
     }
     else {
         QStringList options;
@@ -660,5 +757,179 @@ void MainWindow::onMergeClicked() {
     }
 
     currentImage = outputImage;
+    updateProcessedImage(currentImage);
+}
+void MainWindow::onOilPaintingClicked() {
+    if (!hasImage()) return;
+    bool ok;
+    int radius = getSliderValue("Oil painting", "Brush Size: ", 1, 10, 3, ok);
+    if (!ok) return;
+    saveStateForUndo();
+
+    const int levels = 20;
+    const int w = currentImage.width();
+    const int h = currentImage.height();
+    QImage source = currentImage;
+    QImage result = currentImage;
+
+    for (int y = 0; y < h; ++y) {
+        QRgb *dst = reinterpret_cast<QRgb *>(result.scanLine(y));
+        for (int x = 0; x < w; ++x) {
+            int count[levels]  = {0};
+            int sumR[levels]   = {0};
+            int sumG[levels]   = {0};
+            int sumB[levels]   = {0};
+
+            for (int dy = -radius; dy <= radius; ++dy) {
+                int ny = y + dy;
+                if (ny < 0 || ny >= h) continue;
+                const QRgb *src = reinterpret_cast<const QRgb *>(source.constScanLine(ny));
+                for (int dx = -radius; dx <= radius; ++dx) {
+                    int nx = x + dx;
+                    if (nx < 0 || nx >= w) continue;
+
+                    int r = qRed(src[nx]);
+                    int g = qGreen(src[nx]);
+                    int b = qBlue(src[nx]);
+                    int level = ((r + g + b) / 3) * (levels - 1) / 255;
+
+                    count[level]++;
+                    sumR[level] += r;
+                    sumG[level] += g;
+                    sumB[level] += b;
+                }
+            }
+            int best = 0;
+            for (int i = 1; i < levels; ++i)
+                if (count[i] > count[best]) best = i;
+
+            dst[x] = qRgba(sumR[best] / count[best],
+                           sumG[best] / count[best],
+                           sumB[best] / count[best],
+                           qAlpha(dst[x]));
+        }
+    }
+    currentImage = result;
+    updateProcessedImage(currentImage);
+}
+void MainWindow::onOldTvClicked() {
+    if (!hasImage()) return;
+    saveStateForUndo();
+
+    const int shift = 5,noiseAmount = 10, lineGap = 3;
+    const float lineDarkness = 0.4f;
+    const int w = currentImage.width();
+    const int h = currentImage.height();
+    auto clampPixel = [](int v) { return (v < 0) ? 0 : (v > 255) ? 255 : v; };
+    QImage source = currentImage;
+    QImage result = currentImage;
+
+    for (int j = 0; j < h; ++j) {
+        int glitch = 0;
+        if (rand() % 20 == 0) glitch = (rand() % 20) - 10;
+        float lineFactor = (j % lineGap == 0) ? lineDarkness : 1.0f;
+
+        const QRgb *src = reinterpret_cast<const QRgb *>(source.constScanLine(j));
+        QRgb *dst = reinterpret_cast<QRgb *>(result.scanLine(j));
+
+        for (int i = 0; i < w; ++i) {
+            int noise = (rand() % (2 * noiseAmount + 1)) - noiseAmount;
+            int channels[3];
+
+            for (int k = 0; k < 3; ++k) {
+                int shifted_i = i + glitch;
+                if (k == 0) shifted_i += shift;
+                else if (k == 2) shifted_i -= shift;
+                shifted_i = std::max(std::min(shifted_i, w - 1), 0);
+                int value = (k == 0) ? qRed(src[shifted_i]) : (k == 1) ? qGreen(src[shifted_i]) : qBlue(src[shifted_i]);
+                channels[k] = clampPixel(int(value * lineFactor + noise));
+            }
+            dst[i] = qRgba(channels[0], channels[1], channels[2], qAlpha(src[i]));
+        }
+    }
+    currentImage = result;
+    updateProcessedImage(currentImage);
+}
+void MainWindow::onCropFilterClicked() {
+    if (!hasImage()) return;
+
+    const int imgW = currentImage.width();
+    const int imgH = currentImage.height();
+
+    QDialog dialog(this);
+    dialog.setWindowTitle("Crop");
+    QFormLayout *form = new QFormLayout(&dialog);
+    form->addRow(new QLabel("Original Size: " + QString::number(imgW) + " x " + QString::number(imgH)));
+
+    QSpinBox *xBox = new QSpinBox(&dialog);
+    xBox->setRange(0, imgW - 1);
+    QSpinBox *yBox = new QSpinBox(&dialog);
+    yBox->setRange(0, imgH - 1);
+
+    QSpinBox *widthBox = new QSpinBox(&dialog);
+    widthBox->setRange(1, imgW);
+    widthBox->setValue(imgW);
+    QSpinBox *heightBox = new QSpinBox(&dialog);
+    heightBox->setRange(1, imgH);
+    heightBox->setValue(imgH);
+    connect(xBox, QOverload<int>::of(&QSpinBox::valueChanged), widthBox,
+            [=](int x) { widthBox->setMaximum(imgW - x); });
+    connect(yBox, QOverload<int>::of(&QSpinBox::valueChanged), heightBox,
+            [=](int y) { heightBox->setMaximum(imgH - y); });
+
+    form->addRow("X: ", xBox);
+    form->addRow("Y: ", yBox);
+    form->addRow("Width: ", widthBox);
+    form->addRow("Height: ", heightBox);
+
+    QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+    form->addRow(buttons);
+    connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
+    if (dialog.exec() != QDialog::Accepted) return;
+
+    const int x = xBox->value();
+    const int y = yBox->value();
+    const int w = widthBox->value();
+    const int h = heightBox->value();
+
+    saveStateForUndo();
+    QImage cropped(w, h, currentImage.format());
+    for (int j = 0; j < h; ++j) {
+        const QRgb *src = reinterpret_cast<const QRgb *>(currentImage.constScanLine(y + j));
+        QRgb *dst = reinterpret_cast<QRgb *>(cropped.scanLine(j));
+        for (int i = 0; i < w; ++i)
+            dst[i] = src[x + i];
+    }
+    currentImage = cropped;
+    updateProcessedImage(currentImage);
+}
+void MainWindow::onSkewFilterClicked() {
+    if (!hasImage()) return;
+
+    bool ok;
+    int angle = getSliderValue("Skew", "Angle (degrees): ", -60, 60, 20, ok);
+    if (!ok || angle == 0) return;
+    saveStateForUndo();
+
+    const int w = currentImage.width();
+    const int h = currentImage.height();
+    const double pi = 3.141592653589793;
+    const double t = std::tan(std::abs(angle) * pi / 180.0);
+    const int maxShift = static_cast<int>((h - 1) * t);
+
+    QImage skewed(w + maxShift, h, QImage::Format_ARGB32);
+    skewed.fill(Qt::transparent);
+
+    for (int y = 0; y < h; ++y) {
+        int shift = (angle > 0) ? static_cast<int>(y * t) : static_cast<int>((h - 1 - y) * t);
+
+        const QRgb *src = reinterpret_cast<const QRgb *>(currentImage.constScanLine(y));
+        QRgb *dst = reinterpret_cast<QRgb *>(skewed.scanLine(y));
+        for (int x = 0; x < w; ++x)
+            dst[x + shift] = src[x];
+    }
+    currentImage = skewed;
     updateProcessedImage(currentImage);
 }
