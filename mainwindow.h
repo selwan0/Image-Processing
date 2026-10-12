@@ -23,6 +23,8 @@ private slots:
     void onLoadImageClicked();
     void onSaveImageClicked();
     void onUndoClicked();
+    void onRedoClicked();
+    void onResetClicked();
     void onThemeToggleClicked();
     void onGreyscaleClicked();
     void onBlackAndWhiteClicked();
@@ -38,6 +40,7 @@ private:
     Ui::MainWindow *ui;
     QImage currentImage;
     QList<QImage> imageHistory; 
+    QList<QImage> redoHistory;
     void saveStateForUndo();
     void updateImageDisplay();
     bool hasImage();

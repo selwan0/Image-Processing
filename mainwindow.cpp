@@ -18,6 +18,7 @@
 #include <QSlider>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QGraphicsDropShadowEffect>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -30,19 +31,38 @@ MainWindow::MainWindow(QWidget *parent)
         w->setStyleSheet("");
     }
     ui->LoadButton->setText("Load Image \U0001F4C2");
-    ui->SaveButton->setText("Savw Image \U0001F4BE");
-    ui->UndoButton->setText("UNDO \u21A9");
-    connect(ui->LoadButton,    &QPushButton::clicked, this, &MainWindow::onLoadImageClicked); 
+    ui->SaveButton->setText("Save Image \U0001F4BE");
+    ui->LoadButton->setProperty("primary", true);
+    ui->SaveButton->setProperty("primary", true);
+    ui->LoadButton->setFixedSize(160, 44);
+    ui->SaveButton->setFixedSize(160, 44);
+    ui->LoadButton->setCursor(Qt::PointingHandCursor);
+    ui->SaveButton->setCursor(Qt::PointingHandCursor);
+    connect(ui->LoadButton, &QPushButton::clicked, this, &MainWindow::onLoadImageClicked); 
     connect(ui->SaveButton, &QPushButton::clicked, this, &MainWindow::onSaveImageClicked); 
     connect(ui->UndoButton, &QPushButton::clicked, this, &MainWindow::onUndoClicked); 
+    connect(ui->RedoButton, &QPushButton::clicked, this, &MainWindow::onRedoClicked);
+    connect(ui->ResetButton , &QPushButton::clicked, this, &MainWindow::onResetClicked);
     connect(ui->ThemeButton , &QPushButton::clicked, this, &MainWindow::onThemeToggleClicked);
-    connect(ui->pushButton_2,  &QPushButton::clicked, this, &MainWindow::onGreyscaleClicked); 
-    connect(ui->pushButton_3,  &QPushButton::clicked, this, &MainWindow::onBlackAndWhiteClicked);
-    connect(ui->pushButton_4,  &QPushButton::clicked, this, &MainWindow::onInvertClicked); 
+    connect(ui->pushButton_2, &QPushButton::clicked, this, &MainWindow::onGreyscaleClicked); 
+    connect(ui->pushButton_3, &QPushButton::clicked, this, &MainWindow::onBlackAndWhiteClicked);
+    connect(ui->pushButton_4, &QPushButton::clicked, this, &MainWindow::onInvertClicked); 
     connect(ui->pushButton_5, &QPushButton::clicked, this, &MainWindow::onFrameFilterClicked);
     connect(ui->pushButton_9, &QPushButton::clicked, this, &MainWindow::onResizeFilterClicked);
     connect(ui->pushButton_13, &QPushButton::clicked, this, &MainWindow::onBlurFilterClicked);
     connect(ui->pushButton_17, &QPushButton::clicked, this, &MainWindow::onInfraredFilterClicked);
+    const QList<QPushButton *> roundButtons ={ ui->ResetButton , ui->UndoButton, ui->RedoButton};
+    for (QPushButton *b : roundButtons){
+        b->setText("");
+        b->setFixedSize(48,48);
+        b->setIconSize(QSize(24,24));
+        b->setProperty("round", true);
+        b->setCursor(Qt::PointingHandCursor);
+    }
+    ui->ResetButton->setToolTip("Reset to original");
+    ui->UndoButton->setToolTip("Undo");
+    ui->RedoButton->setToolTip("Redo");
+
     applyTheme();
 }
 MainWindow::~MainWindow() {
@@ -72,6 +92,7 @@ void MainWindow::onLoadImageClicked() {
     currentImage = img.convertToFormat(QImage::Format_ARGB32);
     originalImage = currentImage;
     imageHistory.clear(); 
+    redoHistory.clear();
     updateImageDisplay();
     ui->after->clear();
 }
@@ -91,27 +112,54 @@ void MainWindow::updateImageDisplay() {
     if (originalImage.isNull())
         return;
     ui->before->setAlignment(Qt::AlignCenter);
-    ui->before->setPixmap(QPixmap::fromImage(originalImage).scaled(
-        ui->before->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    ui->before->setPixmap(QPixmap::fromImage(originalImage).scaled( ui->before->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+
+    QSize area = ui->before->size() - QSize(16, 16);
+    ui->before->setPixmap(QPixmap::fromImage(originalImage).scaled(area, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
 void MainWindow::saveStateForUndo(){
     imageHistory.append(currentImage);
     if (imageHistory.size() > 20) {
         imageHistory.removeFirst(); 
-}
+    }
+    redoHistory.clear();
 }
 void MainWindow::onUndoClicked() {
     if (imageHistory.isEmpty()) {
         QMessageBox::information(this, "Undo", "Nothing to undo.");
         return;
     }
+    redoHistory.append(currentImage);
     currentImage = imageHistory.takeLast();
+    updateProcessedImage(currentImage);
+}
+void MainWindow::onRedoClicked(){
+    if (redoHistory.isEmpty()){
+        QMessageBox::information(this, "Redo","Nothing to redo");
+        return;
+    }
+    imageHistory.append(currentImage);
+    currentImage = redoHistory.takeLast();
+    updateProcessedImage(currentImage);
+}
+void MainWindow::onResetClicked(){
+    if(!hasImage()) return;
+    saveStateForUndo();
+    currentImage = originalImage;
     updateProcessedImage(currentImage);
 }
 void MainWindow::onThemeToggleClicked() {
     isDarkMode = !isDarkMode;
     applyTheme();
+}
+static void applyShadow(QWidget *w, const QColor &color)
+{
+    auto *shadow = new QGraphicsDropShadowEffect(w);
+    shadow->setBlurRadius(25); 
+    shadow->setOffset(0, 4);
+    shadow->setColor(color);
+    w->setGraphicsEffect(shadow);  
 }
 void MainWindow::applyTheme(){
     QString dark = R"(
@@ -129,6 +177,22 @@ void MainWindow::applyTheme(){
     QPushButton:pressed {background-color: #8db2e3;  color: #1e1e2e; }
     QScrollArea{ background-color: #292935; border: none;}
     QWidget#scrollAreaWidgetContents_2{background-color: #1c1c28;}
+    QLabel#before , QLabel#after {
+        border: 2px solid #2a3c5c;
+        border-radius: 10px;
+        padding : 6px;
+    }
+    QPushButton[Primary="true"]{
+        background-colour: #3b5684;
+        color: #ffffff;
+        border: none;
+        border-radius: 10px;
+        padding: 8px 18px;
+        font-weight: bold;
+    }
+    QPushButton[primary="true"]:hover { background-color: #486ca1; }
+    QPushButton[primary="true"]:pressed { background-color: #213f67; color: #1e1e2e; }
+    QPushButton[primary="true"]:disabled { background-color: #2a2a3a; color: #777; }
     )";
 
     QString light = R"(
@@ -146,10 +210,35 @@ void MainWindow::applyTheme(){
     QPushButton:pressed {background-color: #8d939b;  color: #fcfcff; }
     QScrollArea{ background-color: #d0ccd3; border: none;}
     QWidget#scrollAreaWidgetContents_2{background-color: #dbdbe6;}
+    QLabel#before, QLabel#after {
+        border: 2px solid #b4b4dc;
+        border-radius: 10px;
+        padding: 6px;
+    }
+    QPushButton[primary="true"] {
+    background-color: #645f98;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 18px;
+    font-weight: bold;
+    }
+    QPushButton[primary="true"]:hover { background-color: #8985bf; }
+    QPushButton[primary="true"]:pressed { background-color: #7874b2; }
+    QPushButton[primary="true"]:disabled { background-color: #c9c6e0; color: #888; }
     )";
 
     setStyleSheet(isDarkMode ? dark : light);
     ui->ThemeButton->setText(isDarkMode ? "\u2600 Light Mode" : "\u263E Dark Mode");
+    
+    QString s = isDarkMode ? "" : "_dark";
+    ui->ResetButton->setIcon(QIcon(":/icons/reset" + s + ".svg"));
+    ui->UndoButton->setIcon(QIcon(":/icons/undo" + s + ".svg"));
+    ui->RedoButton->setIcon(QIcon(":/icons/redo" + s + ".svg"));
+
+    QColor shadowColor = isDarkMode ? QColor(65, 90, 132, 150) : QColor(0, 0, 0, 90);      
+    applyShadow(ui->before, shadowColor);
+    applyShadow(ui->after,  shadowColor);
 }
 
 void MainWindow::updateProcessedImage(const QImage &img) {
@@ -182,6 +271,9 @@ int MainWindow::getSliderValue(const QString &title, const QString &label,int mi
     dialog.setMinimumWidth(300);
     ok = (dialog.exec() == QDialog::Accepted);
     return slider->value();
+
+    QSize area = ui->before->size() - QSize(16, 16);
+    ui->before->setPixmap(QPixmap::fromImage(originalImage).scaled(area, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 //***************Filters***************
 void MainWindow::onGreyscaleClicked() {

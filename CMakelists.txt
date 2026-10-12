@@ -16,6 +16,7 @@ add_executable(ImageProcessor
     mainwindow.cpp
     mainwindow.h
     mainwindow.ui
+    resources.qrc
 )
 
 target_link_libraries(ImageProcessor PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
