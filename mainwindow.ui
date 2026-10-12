@@ -281,7 +281,7 @@ QPushButton:pressed {
        <string>frame</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_6">
+     <widget class="QPushButton" name="FlipButton">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -737,13 +737,13 @@ QPushButton:pressed {
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>500</y>
+      <x>370</x>
+      <y>580</y>
       <width>531</width>
-      <height>41</height>
+      <height>48</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -796,6 +796,134 @@ QPushButton:pressed {
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QWidget" name="optionsPanel" native="true">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>490</y>
+      <width>491</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <widget class="QStackedWidget" name="optionsStack">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>0</y>
+       <width>461</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <widget class="QWidget" name="FlipPage">
+      <widget class="QRadioButton" name="radioH">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>98</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>H</string>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="radioV">
+       <property name="geometry">
+        <rect>
+         <x>190</x>
+         <y>10</y>
+         <width>98</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>V</string>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="radioBoth">
+       <property name="geometry">
+        <rect>
+         <x>330</x>
+         <y>10</y>
+         <width>98</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Both</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="RotatePage">
+      <widget class="QRadioButton" name="radio90">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>10</y>
+         <width>98</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>90</string>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="radio180">
+       <property name="geometry">
+        <rect>
+         <x>200</x>
+         <y>10</y>
+         <width>98</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>180</string>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="radio270">
+       <property name="geometry">
+        <rect>
+         <x>330</x>
+         <y>10</y>
+         <width>98</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>270</string>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="horizontalLayoutWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>-40</x>
+       <y>40</y>
+       <width>561</width>
+       <height>48</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QPushButton" name="applyOptionsButton">
+        <property name="text">
+         <string>Apply</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="cancelOptionsButton">
+        <property name="text">
+         <string>Cancel</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

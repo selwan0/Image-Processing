@@ -26,10 +26,13 @@ private slots:
     void onRedoClicked();
     void onResetClicked();
     void onThemeToggleClicked();
+    void onApplyOptionsClicked();
+    void onRotateFilterClicked();
     void onGreyscaleClicked();
     void onBlackAndWhiteClicked();
     void onInvertClicked();
     void onFrameFilterClicked();
+    void onFlipFilterClicked();
     void onResizeFilterClicked();
     void onBlurFilterClicked();
     void onInfraredFilterClicked();
@@ -43,6 +46,8 @@ private:
     QList<QImage> redoHistory;
     void saveStateForUndo();
     void updateImageDisplay();
+    void applyFlip();
+    void applyRotate();
     bool hasImage();
     bool isDarkMode = false;
     void applyTheme();

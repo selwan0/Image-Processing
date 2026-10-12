@@ -2,6 +2,7 @@
 #include "./ui_mainwindow.h"
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QStringList>
 #include <QStandardPaths>
 #include <QDir>
 #include <QCoreApplication>
@@ -44,10 +45,15 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->RedoButton, &QPushButton::clicked, this, &MainWindow::onRedoClicked);
     connect(ui->ResetButton , &QPushButton::clicked, this, &MainWindow::onResetClicked);
     connect(ui->ThemeButton , &QPushButton::clicked, this, &MainWindow::onThemeToggleClicked);
+    ui->optionsPanel->hide();
+    connect(ui->applyOptionsButton, &QPushButton::clicked, this, &MainWindow::onApplyOptionsClicked);
+    connect(ui->cancelOptionsButton, &QPushButton::clicked, ui->optionsPanel, &QWidget::hide);
     connect(ui->pushButton_2, &QPushButton::clicked, this, &MainWindow::onGreyscaleClicked); 
     connect(ui->pushButton_3, &QPushButton::clicked, this, &MainWindow::onBlackAndWhiteClicked);
     connect(ui->pushButton_4, &QPushButton::clicked, this, &MainWindow::onInvertClicked); 
     connect(ui->pushButton_5, &QPushButton::clicked, this, &MainWindow::onFrameFilterClicked);
+    connect(ui->FlipButton, &QPushButton::clicked, this, &MainWindow::onFlipFilterClicked);
+
     connect(ui->pushButton_9, &QPushButton::clicked, this, &MainWindow::onResizeFilterClicked);
     connect(ui->pushButton_13, &QPushButton::clicked, this, &MainWindow::onBlurFilterClicked);
     connect(ui->pushButton_17, &QPushButton::clicked, this, &MainWindow::onInfraredFilterClicked);
@@ -182,8 +188,8 @@ void MainWindow::applyTheme(){
         border-radius: 10px;
         padding : 6px;
     }
-    QPushButton[Primary="true"]{
-        background-colour: #3b5684;
+    QPushButton[primary="true"]{
+        background-color: #3b5684;
         color: #ffffff;
         border: none;
         border-radius: 10px;
@@ -271,10 +277,8 @@ int MainWindow::getSliderValue(const QString &title, const QString &label,int mi
     dialog.setMinimumWidth(300);
     ok = (dialog.exec() == QDialog::Accepted);
     return slider->value();
-
-    QSize area = ui->before->size() - QSize(16, 16);
-    ui->before->setPixmap(QPixmap::fromImage(originalImage).scaled(area, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
+
 //***************Filters***************
 void MainWindow::onGreyscaleClicked() {
     if (!hasImage())return;
@@ -359,7 +363,40 @@ void MainWindow::onFrameFilterClicked() {
     }
     updateProcessedImage(currentImage);
 }
+void MainWindow::onFlipFilterClicked(){
+    if (!hasImage()) return;
+    ui->optionsStack->setCurrentWidget(ui->FlipPage);
+    ui->optionsPanel->show();
+    QStringList options ={"Horizontal (left <-> right)" , "Vertical (top <-> bottom) " , "Both"};
+    bool ok;
+    QString choice = QInputDialog::getItem(this,"Flip", "Choose flip direction: " , options , 0, false, &ok);
+    if(!ok) return;
+    saveStateForUndo();
 
+    const int w = currentImage.width();
+    const int h = currentImage.height();
+    const bool horizontal = (choice == options[0] || choice == options[2]);
+    const bool vertical   = (choice == options[1] || choice == options[2]);
+
+    if (horizontal){
+        for (int y=0 ; y < h ; y++){
+            QRgb *line = reinterpret_cast<QRgb*> (currentImage.scanLine(y));
+            for (int x=0 ; x < w /2 ; x++) {
+                std::swap(line[x], line[w -1 -x]);
+            }
+        }
+    }
+    if (vertical) {
+        for (int y = 0; y < h / 2; ++y) {
+            QRgb *top    = reinterpret_cast<QRgb *>(currentImage.scanLine(y));
+            QRgb *bottom = reinterpret_cast<QRgb *>(currentImage.scanLine(h - 1 - y));
+            for (int x = 0; x < w; ++x){
+                std::swap(top[x], bottom[x]);
+            }
+        }
+    }
+    updateProcessedImage(currentImage);
+}
 void MainWindow::onResizeFilterClicked() {
     if (!hasImage()) return;
     QDialog dialog(this);
