@@ -1,4 +1,4 @@
-Project Name: Image Processing GUI Application (baby photoshop) (CS213 - Object-Oriented Programming).
+Project Name: Image Processing GUI Application (SaNaD Palettes) (CS213 - Object-Oriented Programming).
 Course: CS213 OOP - FCAI Cairo University.
 Instructor: Dr. Mohammad El-Ramly.
 
