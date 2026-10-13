@@ -469,12 +469,10 @@ void applyOilPaintingFilter(Image& image, int brushSize , int levels =20) {
     for (int y = 0; y < image.height; y++) {
         for (int x = 0; x < image.width; x++) {
             vector<int> count(levels, 0), rSum(levels, 0), gSum(levels, 0), bSum(levels, 0);
-
             for (int dy = -brushSize; dy <= brushSize; ++dy) {
                 for (int dx = -brushSize; dx <= brushSize; ++dx) {
                     int newX = x + dx;
                     int newY = y + dy;
-
                     if (newX >= 0 && newX < image.width && newY >= 0 && newY < image.height) {
                         int r = image.getPixel(newX, newY, 0);
                         int g = image.getPixel(newX, newY, 1);
@@ -489,7 +487,6 @@ void applyOilPaintingFilter(Image& image, int brushSize , int levels =20) {
             for (int i = 1 ; i< levels ; i++){
                 if (count[i] > count[best]) best =i;
             }
-
             result.setPixel(x, y, 0, rSum[best] / count[best]);
             result.setPixel(x, y, 1, gSum[best] / count[best]);
             result.setPixel(x, y, 2, bSum[best] / count[best]);
@@ -815,8 +812,6 @@ int main()
             saved = false;
             cout << "Skew Filter applied" << endl;
         }
-
-
         else if(choice == 19)
         {
             int brushSize;
@@ -831,7 +826,6 @@ int main()
                 saved = false;
                 cout << "Oil Painting Filter applied" << endl;
             }
-            
         }
 
 

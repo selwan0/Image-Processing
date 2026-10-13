@@ -48,7 +48,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->LoadButton->setCursor(Qt::PointingHandCursor);
     ui->SaveButton->setCursor(Qt::PointingHandCursor);
     ui->optionsPanel->hide();
-
     ui->optionsPanel->hide();
     connect(ui->optionSlider, &QSlider::valueChanged, this,[this](int v) { ui->sliderValueLabel->setText(QString::number(v)); });
     connect(ui->cropX, QOverload<int>::of(&QSpinBox::valueChanged), this, [this](int x) { ui->cropW->setMaximum(std::max(1, currentImage.width() - x)); });
@@ -880,7 +879,6 @@ void MainWindow::applyOilPainting(int radius) {
     const int h = currentImage.height();
     QImage source = currentImage;
     QImage result = currentImage;
-
     for (int y = 0; y < h; ++y) {
         QRgb *dst = reinterpret_cast<QRgb *>(result.scanLine(y));
         for (int x = 0; x < w; ++x) {
@@ -888,7 +886,6 @@ void MainWindow::applyOilPainting(int radius) {
             int sumR[levels]  = {0};
             int sumG[levels]  = {0};
             int sumB[levels]  = {0};
-
             for (int dy = -radius; dy <= radius; ++dy) {
                 int ny = y + dy;
                 if (ny < 0 || ny >= h) continue;
@@ -900,7 +897,6 @@ void MainWindow::applyOilPainting(int radius) {
                     int g = qGreen(src[nx]);
                     int b = qBlue(src[nx]);
                     int level = ((r + g + b) / 3) * (levels - 1) / 255;
-
                     count[level]++;
                     sumR[level] += r;
                     sumG[level] += g;
@@ -910,7 +906,6 @@ void MainWindow::applyOilPainting(int radius) {
             int best = 0;
             for (int i = 1; i < levels; ++i)
                 if (count[i] > count[best]) best = i;
-
             dst[x] = qRgba(sumR[best] / count[best], sumG[best] / count[best], sumB[best] / count[best], qAlpha(dst[x]));
         }
     }
