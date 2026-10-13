@@ -3,7 +3,7 @@
 //Student Name:Sama Ahmed Ibrahim       Student ID: 20250294    Filters: black and white, rotate
 //Student Name:Kenzi Ali Nosier         Student ID: 20250499    Filters: invert, darken and lighten
 //Student Name:Nada Mohamed Refaat      Student ID: 20250704    Filters: frame, resize
-//Section: S40
+//Section: S4000
 
 
 #include<iostream>
@@ -14,46 +14,32 @@
 using namespace std;
 
 
-void applyframefilter(Image& image , int colorchoice , int type )
-{
+void applyframefilter(Image& image , int colorchoice , int type ){
     int thickness = min (image.width , image.height)/30;
     if(thickness < 5) thickness=5;
-    
     int Red=255 , Green=255 , Blue=255;
     if(colorchoice == 2) {Red=0 ; Green=0 ; Blue=0;}
     if(colorchoice==3) {Red=255 ; Green=0 ; Blue=0;}
     if(colorchoice==4) {Red=0 ; Green=255 ; Blue=0;}
     if(colorchoice==5) {Red=0 ; Green=0 ; Blue=255;}
-   
-     for(int i=0 ; i<image.height ; ++i)
-     {
-        for(int j=0 ; j<image.width ; ++j)
-        {
+     for(int i=0 ; i<image.height ; ++i){
+        for(int j=0 ; j<image.width ; ++j) {
             bool simpleframe = (j < thickness || j >= image.width - thickness || i< thickness || i >= image.height- thickness);
-            int space = thickness + 20;
-            int innerthickness = 10;
+            int space = thickness + 20; int innerthickness = 10;
             bool outerline = (j<thickness || j>= image.width - thickness ||i< thickness || i>= image.height - thickness);
-
             bool innerline = ((j>= space && j<space + innerthickness && i>= space && i< image.height - space)
             ||(j>= image.width - space - innerthickness && j<image.width - space && i>= space && i<image.height - space)
             ||(i>= space && i<space + innerthickness && j>= space && j<image.width - space)
             ||(i>=image.height - space - innerthickness && i<image.height - space && j>= space && j< image.width - space));
-            
             bool fancyframe = outerline || innerline;
-
-            if(type==1 && simpleframe) 
-            {
+            if(type==1 && simpleframe) {
                 image(j,i,0) = Red;
                 image(j,i,1) = Green;
-                image(j,i,2) = Blue;
-            }
-            else if(type==2 && fancyframe) 
-            {
+                image(j,i,2) = Blue;}
+            else if(type==2 && fancyframe) {
                 image(j,i,0) = Red;
                 image(j,i,1) = Green;
-                image(j,i,2) = Blue;
-            }
-                
+                image(j,i,2) = Blue; }
         }
      }
 }
@@ -190,10 +176,8 @@ void applyDarkenFilter(Image& image)
             image.setPixel(i , j , 1 , green*0.5);
             image.setPixel(i , j , 2 , blue*0.5);
         }
-    
     }
 }
-
 void applyLightenFilter(Image& image)
 {
     for(int i=0 ; i<image.width ; i++){
@@ -206,7 +190,6 @@ void applyLightenFilter(Image& image)
             image.setPixel(i , j , 1 , min(((green*0.5) + green ), 255.0));
             image.setPixel(i , j , 2 , min(((blue*0.5) + blue ), 255.0));
         }
-    
     }
 }
 
@@ -239,21 +222,15 @@ void resize_image(Image& image)
 
 void merge(Image& image1, Image& image2, int mergeType) {
     int W, H, mode = 0;
-    
     if (image1.width == image2.width && image1.height == image2.height) {
         W = image1.width;
-        H = image1.height;
-    }
-    else if(mergeType == 1) {
-        mode = 1;
+        H = image1.height; }
+    else if(mergeType == 1) { mode = 1;
         W = max(image1.width, image2.width);
-        H = max(image1.height, image2.height);
-    }
-    else if(mergeType == 2) {
-        mode = 2;
+        H = max(image1.height, image2.height);}
+    else if(mergeType == 2) { mode = 2;
         W = min(image1.width, image2.width);
-        H = min(image1.height, image2.height);
-    }
+        H = min(image1.height, image2.height);}
     Image outputImage (W, H);
     for (int i = 0; i < W; i++) {
         for (int j = 0; j < H; j++) {
@@ -262,19 +239,14 @@ void merge(Image& image1, Image& image2, int mergeType) {
                 i1 = i + (image1.width - W) / 2;
                 j1 = j + (image1.height - H) / 2;
                 i2 = i + (image2.width - W) / 2;
-                j2 = j + (image2.height - H) / 2;
-            }
+                j2 = j + (image2.height - H) / 2;}
             else {
                 i1 = i * image1.width / W;
                 j1 = j * image1.height / H;
                 i2 = i * image2.width / W;
-                j2 = j * image2.height / H;
-            }
+                j2 = j * image2.height / H; }
             for (int k = 0; k < 3; k++) {
-                outputImage(i, j, k) = (image1(i1, j1, k) + image2(i2, j2, k)) / 2;
-            }
-        }
-    }
+                outputImage(i, j, k) = (image1(i1, j1, k) + image2(i2, j2, k)) / 2; } } }
     image1 = outputImage;
 }
 
@@ -330,7 +302,6 @@ void applyCropFilter(Image& image, int x, int y, int width, int height)
                 cropped.setPixel(i, j, 2, blue);
             }
         }
-
         image = cropped;
     }
     else
@@ -480,7 +451,6 @@ void applySkewFilter(Image& image, int angle)
         for (int x = 0; x < image.width; x++)
         {
             int newX = (int)(x + shift);
-
             int red = image.getPixel(x, y, 0);
             int green = image.getPixel(x, y, 1);
             int blue = image.getPixel(x, y, 2);
@@ -490,7 +460,6 @@ void applySkewFilter(Image& image, int angle)
             skewed.setPixel(newX, y, 2, blue);
         }
     }
-
     image = skewed;
 }
 

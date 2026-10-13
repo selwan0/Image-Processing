@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file>icons/logo.png</file>
         <file>icons/redo.svg</file>
         <file>icons/redo_dark.svg</file>
         <file>icons/reset.svg</file>

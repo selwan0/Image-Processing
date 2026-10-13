@@ -7,6 +7,8 @@
 #include <QPushButton>
 #include<QIcon>
 #include<QSize>
+#include <QSlider>
+#include <QSpinBox>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -64,6 +66,25 @@ private:
     void applyTheme();
     int getSliderValue(const QString &title, const QString &label, int minval, int maxval, int defval, bool &ok);
     QImage originalImage;
+
+    enum class PendingFilter { None, Blur, Purple, Darken, Skew, OilPainting };
+    PendingFilter pendingFilter = PendingFilter::None;
+
+    QWidget *sliderPage = nullptr;
+    QLabel  *sliderLabel = nullptr;
+    QSlider *optionSlider = nullptr;
+    QLabel  *sliderValueLabel = nullptr;
+
+    void showSliderPanel(const QString &label, int minval, int maxval, int defval, PendingFilter f);
+    void applyBlur(int radius);
+    void applyDarkenLighten(int value);
+    void applyPurple(int strength);
+    void applySkew(int angle);
+    void applyOilPainting(int radius);
+    void applyResize();
+    void applyCrop();
+
+    
 };
 
 #endif
