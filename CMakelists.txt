@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(ٍSaNaD_Palettes VERSION 0.1 LANGUAGES CXX)
+enable_language(RC)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -17,6 +18,7 @@ add_executable(ImageProcessor
     mainwindow.h
     mainwindow.ui
     resources.qrc
+    app.rc
 )
 
 target_link_libraries(ImageProcessor PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
